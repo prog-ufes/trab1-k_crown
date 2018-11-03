@@ -40,7 +40,7 @@ void quick_sort(float *amostrasvizinhas, int primeiro, int ultimo) {
 int main(){
 
     char url[]="iris/config.txt";
-    char **matrizConfig, ch;
+    char **matrizConfig, **matrizIrisTeste, ch;
     int i, j, w=0, linhas=0, colunas=0;
     //Abre o arquivo
     FILE *arq;

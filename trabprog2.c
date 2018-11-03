@@ -40,7 +40,7 @@ void quick_sort(float *amostrasvizinhas, int primeiro, int ultimo) {
 int main(){
 
     char url[]="iris/config.txt";
-    char **matrizConfig, **matrizIrisTeste, ch;
+    char **matrizConfig, ch;
     int i, j, w=0, linhas=0, colunas=0;
     //Abre o arquivo
     FILE *arq;
@@ -83,7 +83,7 @@ int main(){
     }
     //Abre o arquivo
     FILE *arq1;
-    arq1 = fopen(url, "r");
+    arq1 = fopen(matrizConfig[0], "r");
     if(arq1==NULL){
         printf ("Erro na abertura de arquivo! Programa terminado...");
         exit (1);
@@ -94,15 +94,15 @@ int main(){
 			linhas++;
         }
     }
-    int todasColunas1[linhas];
+    int todasColunas1[linhas], y;
     //conta o numero de colunas de arq e as coloca em ordem em um vetor 
     while( (ch=fgetc(arq1))!= feof(arq1)){
         if(ch != '\n'){
             colunas++;
         }else{
-            todasColunas1[w]=colunas;
+            todasColunas1[y]=colunas;
             colunas=0;
-            w++;
+            y++;
         }
     }
     //Aloca a matriz

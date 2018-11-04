@@ -50,14 +50,16 @@ int main(){
         exit (1);
     }
     //Conta o numero de linhas de arq
-    while( (ch=fgetc(arq))!= feof(arq) ){
+    while(!feof(arq)){
+        fscanf(arq, "%c", ch);
 		if(ch == '\n'){
 			linhas++;
         }
     }
     int todasColunas[linhas];
     //conta o numero de colunas de arq e as coloca em ordem em um vetor 
-    while( (ch=fgetc(arq))!= feof(arq)){
+    while(!feof(arq)){
+        fscanf(arq, "%c", ch);
         if(ch != '\n'){
             colunas++;
         }else{
@@ -89,14 +91,16 @@ int main(){
         exit (1);
     }
     //Conta o numero de linhas de arq
-    while( (ch=fgetc(arq1))!= feof(arq1) ){
+    while(!feof(arq1) ){
+        fscanf(arq1, "%c", ch);
 		if(ch == '\n'){
 			linhas++;
         }
     }
     int todasColunas1[linhas], y;
     //conta o numero de colunas de arq e as coloca em ordem em um vetor 
-    while( (ch=fgetc(arq1))!= feof(arq1)){
+    while(!feof(arq1)){
+        fscanf(arq1, "%c", ch);
         if(ch != '\n'){
             colunas++;
         }else{
@@ -106,13 +110,13 @@ int main(){
         }
     }
     //Aloca a matriz
-    matrizIrisTeste = (char **) malloc(linhas * (sizeof(char)));
+    matrizIrisTeste = (char **) malloc(linhas * (sizeof(char *)));
     for(i=0; i<linhas; i++){
        matrizIrisTeste[i] = (char *) malloc(todasColunas1[i] * (sizeof(char)));
     }
     //Copia o arquivo para a matriz em forma de vetores
     for(i=0; i<linhas; i++){
-        fgets(matrizIrisTeste[i], sizeof(matrizIrisTeste[i]), arq);
+        fgets(matrizIrisTeste[i], todasColunas1[i], arq);
     }
     //Fecha o arquivo
     fclose(arq1);
@@ -149,6 +153,7 @@ int main(){
     //Desaloca a matriz 
     for(i=0; i<linhas; i++){
         free(matrizConfig[i]);
+        free(matrizIrisTeste[i]);
     }
 
     return 0;

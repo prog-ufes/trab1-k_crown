@@ -67,13 +67,13 @@ int main(){
         }
     }
     //Aloca a matriz
-    matrizConfig = (char **) malloc(linhas * (sizeof(char)));
+    matrizConfig = (char **) malloc(linhas * (sizeof(char *)));
     for(i=0; i<linhas; i++){
         matrizConfig[i] = (char *) malloc(todasColunas[i] * (sizeof(char)));
     }
     //Copia o arquivo para a matriz em forma de vetores
     for(i=0; i<linhas; i++){
-        fgets(matrizConfig[i], sizeof(matrizConfig[i]), arq);
+        fgets(matrizConfig[i], todasColunas[i], arq);
     }
     //Fecha o arquivo
     fclose(arq);

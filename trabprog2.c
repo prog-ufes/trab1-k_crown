@@ -40,49 +40,66 @@ void quick_sort(float *amostrasvizinhas, int primeiro, int ultimo) {
 int main(){
 
     char url[]="iris/config.txt";
-    char **matrizConfig, **matrizIrisTeste, ch;
+    char **matrizConfig, **matrizIrisTeste, c, ch;
     int i, j, w=0, linhas=0, colunas=0;
-    //Abre o arquivo
+    int *todasColunas, n;
+    //Abre o arquivo (ok)
     FILE *arq;
     arq = fopen(url, "r");
     if(arq==NULL){
         printf ("Erro na abertura de arquivo! Programa terminado...");
         exit (1);
     }
-    //Conta o numero de linhas de arq
-    while(!feof(arq)){
-        fscanf(arq, "%c", ch);
-		if(ch == '\n'){
-			linhas++;
+    //Conta o numero de linhas e colunas de arq (ok)
+    while(fread (&c, sizeof(char), 1, arq)) {
+            if(c != '\n') {
+                if(c!=' ' && c!=','){
+                    colunas++;
+                }
+            }else if(linhas==0){
+                n = linhas + 1;
+                todasColunas = (int *) malloc(n * sizeof(int));
+                todasColunas[linhas] = colunas;
+                linhas++;
+                colunas = 0;
+            }else{
+                n = linhas + 1;
+                todasColunas = (int *) realloc(todasColunas, n * sizeof(int));
+                todasColunas[linhas] = colunas;
+                linhas++;
+                colunas = 0;
+            }
         }
-    }
-    int todasColunas[linhas];
-    //conta o numero de colunas de arq e as coloca em ordem em um vetor 
-    while(!feof(arq)){
-        fscanf(arq, "%c", ch);
-        if(ch != '\n'){
-            colunas++;
-        }else{
-            todasColunas[w]=colunas;
-            colunas=0;
-            w++;
-        }
-    }
+    printf("%i ", linhas);
+    for(w=0; w<linhas; w++){
+         printf("%i ", todasColunas[w]);
+    }//Ate aqui tudo certo -> dando errado
     //Aloca a matriz
     matrizConfig = (char **) malloc(linhas * (sizeof(char *)));
     for(i=0; i<linhas; i++){
         matrizConfig[i] = (char *) malloc(todasColunas[i] * (sizeof(char)));
     }
+    fclose(arq);
+     arq = fopen(url, "r");
     //Copia o arquivo para a matriz em forma de vetores
-    for(i=0; i<linhas; i++){
+    /*for(i=0; i<linhas; i++){
         fgets(matrizConfig[i], todasColunas[i], arq);
+        
+    }*/
+    i=0;
+    while(fgets(matrizConfig[i], todasColunas[i], arq) != NULL){
+        i++;
+        printf("%s", matrizConfig[i]);
     }
     //Fecha o arquivo
     fclose(arq);
     //Printa a matriz 
-    for(i=0; i<linhas; i++){
-        printf("%s", matrizConfig[i]);
-    }
+    /*for(i=0; i<linhas; i++){
+        for(j=0; j<todasColunas[i]; j++){
+            printf("%c", matrizConfig[i][j]);
+        }
+        printf("\n");
+    }/*
     //Abre o arquivo
     FILE *arq1;
     arq1 = fopen(matrizConfig[0], "r");
@@ -119,7 +136,7 @@ int main(){
         fgets(matrizIrisTeste[i], todasColunas1[i], arq);
     }
     //Fecha o arquivo
-    fclose(arq1);
+    fclose(arq1);*/
 
 
    /* char escolhaDeCalculo;

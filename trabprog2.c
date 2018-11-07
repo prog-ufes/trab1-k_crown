@@ -55,35 +55,33 @@ int main(){
             if(c != '\n') {
                 colunas++;
             }else if(linhas==0){
+                n = linhas + 1;
                 //Conta o numero de linhas e coloca o numero de colunas na linha que pertence
-                todasColunas = (int *) malloc( 1 * sizeof(int));
+                todasColunas = (int *) malloc( n * sizeof(int));
                 todasColunas[linhas] = colunas;
-                matrizConfig = (char **) malloc(1 * (sizeof(char *)));
-                for(i=0; i<1; i++){
-                        matrizConfig[i] = (char *) malloc(todasColunas[i] * (sizeof(char)));
-                }
+                /*matrizConfig = (char **) malloc(n * (sizeof(char *)));
+                for(i=0; i<n; i++){
+                        matrizConfig[i] = (char *) malloc((todasColunas[i]+1) * (sizeof(char)));
+                }*/
                 linhas++;
                 colunas = 0;
                 }else{
                     n = linhas + 1;
                     todasColunas = (int *) realloc(todasColunas, n * sizeof(int));
                     todasColunas[linhas] = colunas;
-                    matrizConfig = (char **) realloc(matrizConfig, (linhas + 1) * (sizeof(char *)));
+                    /*matrizConfig = (char **) realloc(matrizConfig, n * (sizeof(char *)));
                     for(i=0; i<(linhas + 1); i++){
-                            matrizConfig[i] = (char *) realloc(matrizConfig[i], todasColunas[i] * (sizeof(char)));
-                    }
+                            matrizConfig[i] = (char *) realloc(matrizConfig[i], (todasColunas[i]+1) * (sizeof(char)));
+                    }*/
                     linhas++;
                     colunas = 0;
                 }
     }
-    fclose(arq);
-    FILE *arq1;
-    arq1 = fopen(url, "r");
     i=0;
-    while(fgets(matrizConfig[i], todasColunas[i]+1, arq1) != NULL){
+    /*while(fgets(matrizConfig[i], todasColunas[i], arq) != NULL){
         printf("%s", matrizConfig[i]);
         i++;
-    }
+    }*/
     fclose(arq);
     printf("%i ", linhas);
     for(w=0; w<linhas; w++){

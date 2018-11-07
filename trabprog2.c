@@ -53,46 +53,50 @@ int main(){
     //Conta o numero de linhas e colunas de arq (ok)
     while(fread (&c, sizeof(char), 1, arq)) {
             if(c != '\n') {
-                if(c!=' ' && c!=','){
-                    colunas++;
-                }
+                colunas++;
             }else if(linhas==0){
-                n = linhas + 1;
-                todasColunas = (int *) malloc(n * sizeof(int));
+                //Conta o numero de linhas e coloca o numero de colunas na linha que pertence
+                todasColunas = (int *) malloc( 1 * sizeof(int));
                 todasColunas[linhas] = colunas;
+                matrizConfig = (char **) malloc(1 * (sizeof(char *)));
+                for(i=0; i<1; i++){
+                        matrizConfig[i] = (char *) malloc(todasColunas[i] * (sizeof(char)));
+                }
                 linhas++;
                 colunas = 0;
-            }else{
-                n = linhas + 1;
-                todasColunas = (int *) realloc(todasColunas, n * sizeof(int));
-                todasColunas[linhas] = colunas;
-                linhas++;
-                colunas = 0;
-            }
-        }
+                }else{
+                    n = linhas + 1;
+                    todasColunas = (int *) realloc(todasColunas, n * sizeof(int));
+                    todasColunas[linhas] = colunas;
+                    matrizConfig = (char **) realloc(matrizConfig, (linhas + 1) * (sizeof(char *)));
+                    for(i=0; i<(linhas + 1); i++){
+                            matrizConfig[i] = (char *) realloc(matrizConfig[i], todasColunas[i] * (sizeof(char)));
+                    }
+                    linhas++;
+                    colunas = 0;
+                }
+    }
+    fclose(arq);
+    FILE *arq1;
+    arq1 = fopen(url, "r");
+    i=0;
+    while(fgets(matrizConfig[i], todasColunas[i]+1, arq1) != NULL){
+        printf("%s", matrizConfig[i]);
+        i++;
+    }
+    fclose(arq);
     printf("%i ", linhas);
     for(w=0; w<linhas; w++){
          printf("%i ", todasColunas[w]);
-    }//Ate aqui tudo certo -> dando errado
-    //Aloca a matriz
-    matrizConfig = (char **) malloc(linhas * (sizeof(char *)));
-    for(i=0; i<linhas; i++){
-        matrizConfig[i] = (char *) malloc(todasColunas[i] * (sizeof(char)));
     }
-    fclose(arq);
-     arq = fopen(url, "r");
+    //Ate aqui tudo certo -> dando errado
+    //Aloca a matriz
+   
     //Copia o arquivo para a matriz em forma de vetores
     /*for(i=0; i<linhas; i++){
         fgets(matrizConfig[i], todasColunas[i], arq);
         
     }*/
-    i=0;
-    while(fgets(matrizConfig[i], todasColunas[i], arq) != NULL){
-        i++;
-        printf("%s", matrizConfig[i]);
-    }
-    //Fecha o arquivo
-    fclose(arq);
     //Printa a matriz 
     /*for(i=0; i<linhas; i++){
         for(j=0; j<todasColunas[i]; j++){
@@ -167,7 +171,8 @@ int main(){
 
     int matDeConf[numDeRotulos][numDeRotulos];*/
 
-    //Desaloca a matriz 
+    //Desaloca a matriz
+    free(todasColunas);
     for(i=0; i<linhas; i++){
         free(matrizConfig[i]);
         free(matrizIrisTeste[i]);

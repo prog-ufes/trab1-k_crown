@@ -40,9 +40,10 @@ void quick_sort(float *amostrasvizinhas, int primeiro, int ultimo) {
 int main(){
 
     char url[]="iris/config.txt";
-    char **matrizConfig, **matrizIrisTeste, c, ch;
+    char **matrizConfigArq, **matrizIrisTeste, c, ch;
     int i, j, w=0, linhas=0, colunas=0;
     int *todasColunas, n;
+    float **matrizConfig;
     //Abre o arquivo (ok)
     FILE *arq;
     arq = fopen(url, "r");
@@ -56,40 +57,47 @@ int main(){
                 colunas++;
             }else if(linhas==0){
                 n = linhas + 1;
-                //Conta o numero de linhas e coloca o numero de colunas na linha que pertence
+                //Conta o numero de linhas e coloca o numero de colunas na linha que pertence (ok)
                 todasColunas = (int *) malloc( n * sizeof(int));
                 todasColunas[linhas] = colunas;
-                /*matrizConfig = (char **) malloc(n * (sizeof(char *)));
-                for(i=0; i<n; i++){
-                        matrizConfig[i] = (char *) malloc((todasColunas[i]+1) * (sizeof(char)));
-                }*/
                 linhas++;
                 colunas = 0;
                 }else{
                     n = linhas + 1;
                     todasColunas = (int *) realloc(todasColunas, n * sizeof(int));
                     todasColunas[linhas] = colunas;
-                    /*matrizConfig = (char **) realloc(matrizConfig, n * (sizeof(char *)));
-                    for(i=0; i<(linhas + 1); i++){
-                            matrizConfig[i] = (char *) realloc(matrizConfig[i], (todasColunas[i]+1) * (sizeof(char)));
-                    }*/
                     linhas++;
                     colunas = 0;
                 }
     }
-    i=0;
-    /*while(fgets(matrizConfig[i], todasColunas[i], arq) != NULL){
-        printf("%s", matrizConfig[i]);
-        i++;
-    }*/
-    fclose(arq);
-    printf("%i ", linhas);
-    for(w=0; w<linhas; w++){
-         printf("%i ", todasColunas[w]);
+    //Aloca a matriz com o nome de outros arquivos (ok)
+    matrizConfigArq = (char **) malloc(linhas * (sizeof(char *)));
+    for(i=0; i<linhas; i++){
+        matrizConfigArq[i] = (char *) malloc((todasColunas[i]+1) * (sizeof(char)));
     }
-    //Ate aqui tudo certo -> dando errado
-    //Aloca a matriz
-   
+    //Aloca a matriz com as entradas (ok)
+    matrizConfig = (float **) malloc((linhas - 3) * (sizeof(float *)));
+    for(i=0; i<linhas; i++){
+        matrizConfig[i] = (float *) malloc((todasColunas[i]) * (sizeof(float)));
+    }
+    //Le o arquivo e coloca na matriz (dando erro)
+    for(i = 3; i < linhas; i++){
+        for(j = 0; j < todasColunas[i]; j++) {
+            fscanf(arq, "%lf", &matrizConfig[i][j]);
+            printf("%lf ",matrizConfig[i][j]);
+        }
+        printf("\n");
+    }
+    for(i = 0; i < 3; i++){
+        fgets(matrizConfigArq[i], todasColunas[i], arq);
+    }
+    for(i=0; i<3; i++){
+        for(j=0; j<todasColunas[i]; j++){
+            printf("%c", matrizConfigArq[i][j]);
+        }
+        printf("\n");
+    }
+    fclose(arq);
     //Copia o arquivo para a matriz em forma de vetores
     /*for(i=0; i<linhas; i++){
         fgets(matrizConfig[i], todasColunas[i], arq);
@@ -173,7 +181,11 @@ int main(){
     free(todasColunas);
     for(i=0; i<linhas; i++){
         free(matrizConfig[i]);
+        free(matrizConfig[i]);
         free(matrizIrisTeste[i]);
+    }
+    for(i=0; i<linhas; i++){
+        free(matrizConfig[i]);
     }
 
     return 0;

@@ -88,7 +88,8 @@ int main(){
         }
         printf("\n");
     }
-    for(i = 0; i < 3; i++){
+    //Não Funciona
+    /*for(i = 0; i < 3; i++){
         fgets(matrizConfigArq[i], todasColunas[i], arq);
     }
     for(i=0; i<3; i++){
@@ -96,7 +97,7 @@ int main(){
             printf("%c", matrizConfigArq[i][j]);
         }
         printf("\n");
-    }
+    }*/
     fclose(arq);
     //Copia o arquivo para a matriz em forma de vetores
     /*for(i=0; i<linhas; i++){

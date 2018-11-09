@@ -39,7 +39,7 @@ void quick_sort(float *amostrasvizinhas, int primeiro, int ultimo) {
 
 int main(){
 
-    char *arquivoteste, *arquivotreino, *predicoes, *modoDecalcular, c;
+    char *arquivoteste, *arquivotreino, *predicoes, *modoDecalcular, c, lixo;
     int *numeroDeVizinhos, tamanho[3], colunas, i, j, linhas=0, tamanhovet;
     float *raio;
 
@@ -50,69 +50,59 @@ int main(){
         return 1;
     }
 
-    arquivotreino = (char *) malloc(1 * sizeof(char));
-    arquivoteste = (char *) malloc(1 * sizeof(char));
-    predicoes = (char *) malloc(1 * sizeof(char));
+    arquivotreino = (char *) malloc(2 * sizeof(char));
+    arquivoteste = (char *) malloc(2 * sizeof(char));
+    predicoes = (char *) malloc(2 * sizeof(char));
     numeroDeVizinhos = (int *) malloc(1 * sizeof(int));
     raio = (float *) malloc(1 * sizeof(float));
-    modoDecalcular = (char *) malloc(1 * sizeof(char));
+    modoDecalcular = (char *) malloc(2 * sizeof(char));
 
-    while(fscanf(arq, "%c", &c) && linhas !=3){
-        if(c != '\n'){
-            switch(linhas){
-                case 0: colunas++;
-                        arquivotreino = (char *) realloc(arquivotreino, colunas * sizeof(char));
-                        arquivotreino[i] = c;
+    //Aloca os vetores de arquivos e de entradas
+    while(!feof(arq)){
+        while(fscanf(arq, "%c", &c) && linhas <3){
+            if(c != '\n'){
+                switch(linhas){
+                    case 0: colunas++;
+                            arquivotreino = (char *) realloc(arquivotreino, colunas * sizeof(char));
+                            arquivotreino[i] = c;
                             printf("%c", arquivotreino[i]);
                             i++;
                             break;
-                case 1: colunas++;
-                        arquivoteste = (char *) realloc(arquivoteste, colunas * sizeof(char));
-                        arquivoteste[i] = c;
-                        printf("%c", arquivoteste[i]);
-                        i++;
-                        break;
-                case 2: colunas++;
-                        predicoes = (char *) realloc(predicoes, colunas * sizeof(char));
-                        predicoes[i] = c;
-                        printf("%c", predicoes[i]);
-                        i++;
-                        break;
+                    case 1: colunas++;
+                            arquivoteste = (char *) realloc(arquivoteste, colunas * sizeof(char));
+                            arquivoteste[i] = c;
+                            printf("%c", arquivoteste[i]);
+                            i++;
+                            break;
+                    case 2: colunas++;
+                            predicoes = (char *) realloc(predicoes, colunas * sizeof(char));
+                            predicoes[i] = c;
+                            printf("%c", predicoes[i]);
+                            i++;
+                            break;
+                }
+            }else{
+                linhas++;
+                colunas=0;
+                i=0;
+                printf("\n");
             }
-        }else{
-            scanf("%i", &tamanho[linhas]);
-            linhas++;
-            colunas=0;
-            i=0;
         }
-    }
-    /*while(!feof(arq)){
-        fscanf(arq, "%i, %c, ", &numeroDeVizinhos[i], &modoDecalcular[i]);
+        i=0;
+        fscanf(arq, "%i, %c", &numeroDeVizinhos[i], &modoDecalcular[i]);
+        printf("%i\n", numeroDeVizinhos[i]);
+        printf("%c\n", modoDecalcular[i]);
         if(modoDecalcular[i] == 'M'){
-            fscanf(arq, "%f", &raio[i]);
+            fscanf(arq, ", %f", &raio[i]);
         }else{
             raio[i] = 0;
         }
+        printf("%i, %c, %f\n", numeroDeVizinhos[i], modoDecalcular[i], raio[i]);
         i++;
-        modoDecalcular = (char *) realloc(modoDecalcular, (i+1) * sizeof(char));
-        numeroDeVizinhos = (int *) realloc(numeroDeVizinhos, i * sizeof(int));
-        raio = (float *) realloc(raio, i * sizeof(float));
-
-    }*/
-    tamanhovet = i;    
-
-    /*for(j=0; j<tamanhovet; j++){
-        printf("%i ", numeroDeVizinhos[j]);
+        modoDecalcular = (char *) realloc(modoDecalcular, (i+2) * sizeof(char));
+        numeroDeVizinhos = (int *) realloc(numeroDeVizinhos, (i+1) * sizeof(int));
+        raio = (float *) realloc(raio, (i+1) * sizeof(float));
     }
-    printf("\n");
-    for(j=0; j<tamanhovet; j++){
-        printf("%f ", raio[j]);
-    }
-    printf("\n");
-    for(j=0; j<tamanhovet; j++){
-        printf("%c ", modoDecalcular);
-    }*/
-
 
     free(arquivoteste);
     free(arquivotreino);

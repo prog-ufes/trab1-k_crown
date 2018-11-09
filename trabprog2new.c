@@ -122,10 +122,11 @@ int main(){
     i=0;
     j=0;
     char *f;
-    while(fscanf(arqtreino, "%c", &*f)){
-        if(*f != '\n'){
+    while(fscanf(arqtreino, "%c", &c)){
+        if(c != '\n'){
             colunasTreino++;
             matrizDeTreino[i] = (float *) realloc(matrizDeTreino[i], colunasTreino * sizeof(float));
+            f = &c;
             matrizDeTreino[i][j] = atof(f);
             printf("%f", matrizDeTreino[i][j]);
             j++;

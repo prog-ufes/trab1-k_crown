@@ -40,22 +40,11 @@ void quick_sort(float *amostrasvizinhas, int primeiro, int ultimo) {
 int main(){
 
     char *arquivoteste, *arquivotreino, *predicoes, *modoDecalcular, c, lixo;
-    int *numeroDeVizinhos, colunas, i, j=0, linhas=0, colunasTeste=0, colunasTreino=0, linhasTeste=0, linhasTreino=0, todasColunas[3];
+    int *numeroDeVizinhos, colunas=0, i=0, j=0, linhas=0, colunasTeste=0, colunasTreino=0, linhasTeste=0, linhasTreino=0, *todasColunas;
     float *raio, **matrizDeTeste, **matrizDeTreino;
+    int n;
 
-    FILE *arq;
-    arq = fopen("iris/config.txt", "r");
-    if(arq == NULL){
-        printf("Erro");
-        return 1;
-    }
-
-    arquivotreino = (char *) malloc(10 * sizeof(char));
-    arquivoteste = (char *) malloc(10 * sizeof(char));
-    predicoes = (char *) malloc(10 * sizeof(char));
-    numeroDeVizinhos = (int *) malloc(1 * sizeof(int));
-    raio = (float *) malloc(1 * sizeof(float));
-    modoDecalcular = (char *) malloc(10 * sizeof(char));
+    todasColunas = (int *) malloc(1 * sizeof(int));
 
     matrizDeTreino = (float **) malloc(1*sizeof(float*));
     for(j=0; j<1; j++){
@@ -66,34 +55,61 @@ int main(){
         matrizDeTeste[j] = (float *) malloc(1*sizeof(float));
     }
 
+    FILE *arq;
+    arq = fopen("iris/config.txt", "r");
+    if(arq == NULL){
+        printf("Erro");
+        return 1;
+    }
+
+    while(fread (&c, sizeof(char), 1, arq)) {
+            if(c != '\n') {
+                colunas++;
+            }else if(linhas==0){
+                n = linhas + 1;
+                todasColunas = (int *) malloc( n * sizeof(int));
+                todasColunas[linhas] = colunas +1;
+                linhas++;
+                colunas = 0;
+                }else{
+                    n = linhas + 1;
+                    todasColunas = (int *) realloc(todasColunas, n * sizeof(int));
+                    todasColunas[linhas] = colunas + 1;
+                    linhas++;
+                    colunas = 0;
+                }
+    
+    }
+
+    arquivotreino = (char *) malloc(todasColunas[0] * sizeof(char));
+    arquivoteste = (char *) malloc(todasColunas[1] * sizeof(char));
+    predicoes = (char *) malloc(todasColunas[2] * sizeof(char));
+    numeroDeVizinhos = (int *) malloc((linhas - 3) * sizeof(int));
+    raio = (float *) malloc((linhas - 3) * sizeof(float));
+    modoDecalcular = (char *) malloc((linhas - 3) * sizeof(char));
+    
+    rewind(arq);
+    colunas=0;
     //Aloca os vetores de arquivos e de entradas
     while(!feof(arq)){
         while(fscanf(arq, "%c", &c) && linhas <3){
             if(c != '\n'){
                 switch(linhas){
-                    case 0: colunas++;
-                            arquivotreino = (char *) realloc(arquivotreino, colunas * sizeof(char));
-                            arquivotreino[i] = c;
+                    case 0: arquivotreino[i] = c;
                             printf("%c", arquivotreino[i]);
                             i++;
                             break;
-                    case 1: colunas++;
-                            arquivoteste = (char *) realloc(arquivoteste, colunas * sizeof(char));
-                            arquivoteste[i] = c;
+                    case 1: arquivoteste[i] = c;
                             printf("%c", arquivoteste[i]);
                             i++;
                             break;
-                    case 2: colunas++;
-                            predicoes = (char *) realloc(predicoes, colunas * sizeof(char));
-                            predicoes[i] = c;
+                    case 2: predicoes[i] = c;
                             printf("%c", predicoes[i]);
                             i++;
                             break;
                 }
             }else{
-                todasColunas[j] = colunas;
                 linhas++;
-                colunas=0;
                 i=0;
                 printf("\n");
             }
@@ -107,22 +123,22 @@ int main(){
         }
         printf("%i, %c, %f\n", numeroDeVizinhos[i], modoDecalcular[i], raio[i]);
         i++;
-        modoDecalcular = (char *) realloc(modoDecalcular, (i+1) * sizeof(char));
-        numeroDeVizinhos = (int *) realloc(numeroDeVizinhos, i * sizeof(int));
-        raio = (float *) realloc(raio, i * sizeof(float));
     }
-    printf("%c", arquivotreino[0]);
+
+    for(i=0; i<strlen(arquivoteste); i++){
+        printf("%c", arquivoteste[i]);
+    }
     
-    FILE *arqtreino;
-    arqtreino = fopen(arquivotreino, "r");
-    if(arqtreino == NULL){
+    /*FILE *arqteste;
+    arqteste = fopen(arquivoteste, "r");
+    if(arqteste == NULL){
         printf("Erro");
         return 1;
     }
     i=0;
     j=0;
     char *f;
-    while(fscanf(arqtreino, "%c", &c)){
+    while(fscanf(arqteste, "%c", &c)){
         if(c != '\n'){
             colunasTreino++;
             matrizDeTreino[i] = (float *) realloc(matrizDeTreino[i], colunasTreino * sizeof(float));
@@ -138,7 +154,9 @@ int main(){
             j=0;
             printf("\n");
         }
-    }
+    }*/
+
+    free(todasColunas);
 
     free(arquivoteste);
     free(arquivotreino);

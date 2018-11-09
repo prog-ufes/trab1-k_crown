@@ -40,8 +40,8 @@ void quick_sort(float *amostrasvizinhas, int primeiro, int ultimo) {
 int main(){
 
     char *arquivoteste, *arquivotreino, *predicoes, *modoDecalcular, c, lixo;
-    int *numeroDeVizinhos, tamanho[3], colunas, i, j, linhas=0, tamanhovet;
-    float *raio;
+    int *numeroDeVizinhos, colunas, i, j=0, linhas=0, colunasTeste=0, colunasTreino=0, linhasTeste=0, linhasTreino=0, todasColunas[3];
+    float *raio, **matrizDeTeste, **matrizDeTreino;
 
     FILE *arq;
     arq = fopen("iris/config.txt", "r");
@@ -50,12 +50,21 @@ int main(){
         return 1;
     }
 
-    arquivotreino = (char *) malloc(2 * sizeof(char));
-    arquivoteste = (char *) malloc(2 * sizeof(char));
-    predicoes = (char *) malloc(2 * sizeof(char));
+    arquivotreino = (char *) malloc(10 * sizeof(char));
+    arquivoteste = (char *) malloc(10 * sizeof(char));
+    predicoes = (char *) malloc(10 * sizeof(char));
     numeroDeVizinhos = (int *) malloc(1 * sizeof(int));
     raio = (float *) malloc(1 * sizeof(float));
-    modoDecalcular = (char *) malloc(2 * sizeof(char));
+    modoDecalcular = (char *) malloc(10 * sizeof(char));
+
+    matrizDeTreino = (float **) malloc(1*sizeof(float*));
+    for(j=0; j<1; j++){
+        matrizDeTreino[j] = (float *) malloc(1*sizeof(float));
+    }
+    matrizDeTeste = (float **) malloc(1*sizeof(float*));
+    for(j=0; j<1; j++){
+        matrizDeTeste[j] = (float *) malloc(1*sizeof(float));
+    }
 
     //Aloca os vetores de arquivos e de entradas
     while(!feof(arq)){
@@ -82,6 +91,7 @@ int main(){
                             break;
                 }
             }else{
+                todasColunas[j] = colunas;
                 linhas++;
                 colunas=0;
                 i=0;
@@ -90,8 +100,6 @@ int main(){
         }
         i=0;
         fscanf(arq, "%i, %c", &numeroDeVizinhos[i], &modoDecalcular[i]);
-        printf("%i\n", numeroDeVizinhos[i]);
-        printf("%c\n", modoDecalcular[i]);
         if(modoDecalcular[i] == 'M'){
             fscanf(arq, ", %f", &raio[i]);
         }else{
@@ -99,9 +107,36 @@ int main(){
         }
         printf("%i, %c, %f\n", numeroDeVizinhos[i], modoDecalcular[i], raio[i]);
         i++;
-        modoDecalcular = (char *) realloc(modoDecalcular, (i+2) * sizeof(char));
-        numeroDeVizinhos = (int *) realloc(numeroDeVizinhos, (i+1) * sizeof(int));
-        raio = (float *) realloc(raio, (i+1) * sizeof(float));
+        modoDecalcular = (char *) realloc(modoDecalcular, (i+1) * sizeof(char));
+        numeroDeVizinhos = (int *) realloc(numeroDeVizinhos, i * sizeof(int));
+        raio = (float *) realloc(raio, i * sizeof(float));
+    }
+    printf("%c", arquivotreino[0]);
+    
+    FILE *arqtreino;
+    arqtreino = fopen(arquivotreino, "r");
+    if(arqtreino == NULL){
+        printf("Erro");
+        return 1;
+    }
+    i=0;
+    j=0;
+    char *f;
+    while(fscanf(arqtreino, "%c", &*f)){
+        if(*f != '\n'){
+            colunasTreino++;
+            matrizDeTreino[i] = (float *) realloc(matrizDeTreino[i], colunasTreino * sizeof(float));
+            matrizDeTreino[i][j] = atof(f);
+            printf("%f", matrizDeTreino[i][j]);
+            j++;
+        }else{
+            linhasTreino++;
+            matrizDeTreino = (float **) realloc(matrizDeTreino, colunasTreino * sizeof(float *));
+            colunasTreino=0;
+            i++;
+            j=0;
+            printf("\n");
+        }
     }
 
     free(arquivoteste);
@@ -110,6 +145,15 @@ int main(){
     free(modoDecalcular);
     free(numeroDeVizinhos);
     free(raio);
+
+    for(j=0; j<colunasTreino; j++){
+        free(matrizDeTreino[i]);
+    }
+    free(matrizDeTeste);
+    for(j=0; j<colunasTeste; j++){
+        free(matrizDeTeste[i]);
+    }
+    free(matrizDeTeste);
 
     return 0;
 }

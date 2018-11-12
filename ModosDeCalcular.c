@@ -36,21 +36,15 @@ void quick_sort(float *amostrasvizinhas, int primeiro, int ultimo) {
     }
 }
 
-void soma(float **Amostra, float **Vizinhos, float **somas, int linhasamostras, int linhasVizinhos, int colunasVizinhos){
-    int i=0, j=0, l=0, m=0;
-    while(l<linhasamostras){
-        while(i<linhasVizinhos){
-            while(j<(colunasVizinhos-1)){
-                somas[m][j] = Amostra[l][j] + Vizinhos[i][j];
-                j++;
-            }
-            m++;
-            i++;
-            j=0;
+void soma(float **Entrada, float *Saida, int linhasamostras, int linhasVizinhos, int colunasVizinhos){
+    int i, j;
+    for(i=0; i<(linhasamostras * linhasVizinhos); i++){
+        Saida[i] = 0;
+    }
+    for(i=0; i<(linhasamostras * linhasVizinhos); i++){
+        for(j=0; j<colunasVizinhos; j++){
+            Saida[i] = Saida[i] + Entrada[i][j];
         }
-        l++;
-        i=0;
-        j=0;
     }
 }
 
@@ -72,10 +66,19 @@ void subtracao(float **Amostra, float **Vizinhos, float **subtracoes, int linhas
     }
 }
 
+void multiplicacao(float **multiplicacoes, float **Entrada, int linhasamostras, int linhasVizinhos, int colunasVizinhos, float n){
+    int i, j;
+    for(i=0; i<(linhasamostras * linhasVizinhos); i++){
+        for(j=0; j<colunasVizinhos; j++){
+            multiplicacoes[i][j] = pow(Entrada[i][j],n);
+        }
+    }
+}
+
 int main(){
 
     char Modo;
-    float **subtracoes, **Amostra, **Vizinhos, **Distancias, **somas, saida, raio;
+    float **multiplicacoes, **subtracoes, **Amostra, **Vizinhos, **Distancias, **somas, saida, raio;
     int k, i, j, linhasVizinhos, colunasVizinhos, linhasamostras, x;
 
     scanf("%c", &Modo);
@@ -87,11 +90,15 @@ int main(){
     x = linhasamostras * linhasVizinhos;
     somas = (float **) malloc(x * sizeof(float *));
     for(i=0; i<x; i++){
-        somas = (float *) malloc(colunasVizinhos * sizeof(float));
+        somas[i] = (float *) malloc(colunasVizinhos * sizeof(float));
     }
     subtracoes = (float **) malloc(x * sizeof(float *));
     for(i=0; i<x; i++){
-        subtracoes = (float *) malloc(colunasVizinhos * sizeof(float));
+        subtracoes[i] = (float *) malloc(colunasVizinhos * sizeof(float));
+    }
+    multiplicacoes = (float **) malloc(x * sizeof(float *));
+    for(i=0; i<x; i++){
+        multiplicacoes[i] = (float *) malloc(colunasVizinhos * sizeof(float));
     }
     Amostra = (float **) malloc(linhasamostras * sizeof(float*));
     for(i=0; i<linhasamostras; i++){
@@ -108,19 +115,41 @@ int main(){
 
     switch(Modo){
         case 'E' :
-            while(j<linhasamostras){
-
-            }
+            subtracao(Amostra, Vizinhos, subtracoes, linhasamostras, linhasVizinhos, colunasVizinhos);
+            multiplicacao(multiplicacoes, subtracoes, linhasamostras, linhasVizinhos, colunasVizinhos, 2);
             break;
         case 'M' :
+            subtracao(Amostra, Vizinhos, subtracoes, linhasamostras, linhasVizinhos, colunasVizinhos);
+            multiplicacao(multiplicacoes, subtracoes, linhasamostras, linhasVizinhos, colunasVizinhos, raio);
             break;
         case 'C' :
             break;
     }
-    while(j<linhasamostras){
-
-    }
     
+    for(i=0; i<x; i++){
+        free(somas[i]);
+    }
+    free(somas);
+    for(i=0; i<x; i++){
+        free(subtracoes[i]);
+    }
+    free(subtracoes);
+    for(i=0; i<x; i++){
+        free(multiplicacoes[i]);
+    }
+    free(multiplicacoes);
+    for(i=0; i<; i++){
+        free(Amostra[i]);
+    }
+    free(Amostra);
+    for(i=0; i<; i++){
+        free(Distancias[i]);
+    }
+    free(Distancias);
+    for(i=0; i<; i++){
+        free(Vizinhos[i]);
+    }
+    free(Vizinhos);
 
     return 0;
 }

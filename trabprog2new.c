@@ -4,7 +4,7 @@
 #include<string.h>
 
 //Ordena do menor para o maior
-/*void quick_sort(float *amostrasvizinhas, int primeiro, int ultimo) {
+void quick_sort(float *amostrasvizinhas, int primeiro, int ultimo) {
     int i, j, z;
     float x, y;
      
@@ -35,7 +35,7 @@
     if(i < ultimo) {
         quick_sort(amostrasvizinhas, i, ultimo);
     }
-}*/
+}
 
 int main(){
 
@@ -118,7 +118,12 @@ int main(){
                 i=0;
             }
         }
-        fscanf(arq, "%i, %c, %f", &numeroDeVizinhos[i], &modoDecalcular[i], &raio[i]);
+        fscanf(arq, "%i, %c", &numeroDeVizinhos[i], &modoDecalcular[i]);
+        if(modoDecalcular[i] == 'M'){
+            fscanf(arq, ", %f", &raio[i]);
+        }else{
+            raio[i]=0;
+        }
         i++;
     }
     for(i=0; i<todasColunas[0]; i++){

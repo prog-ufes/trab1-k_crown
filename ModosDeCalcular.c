@@ -66,7 +66,7 @@ void subtracao(float **Amostra, float **Vizinhos, float **subtracoes, int linhas
     }
 }
 
-void multiplicacao(float **multiplicacoes, float **Entrada, int linhasamostras, int linhasVizinhos, int colunasVizinhos, float n){
+void multiplicacao(float **Entrada, float **multiplicacoes, int linhasamostras, int linhasVizinhos, int colunasVizinhos, float n){
     int i, j;
     for(i=0; i<(linhasamostras * linhasVizinhos); i++){
         for(j=0; j<colunasVizinhos; j++){
@@ -75,10 +75,17 @@ void multiplicacao(float **multiplicacoes, float **Entrada, int linhasamostras, 
     }
 }
 
+void multiplicacaovet(float *Entrada, float *multiplicacoes, int linhasamostras, int linhasVizinhos, float n){
+    int i;
+    for(i=0; i<(linhasamostras * linhasVizinhos); i++){
+        multiplicacoes[i] = pow(Entrada[i],n);
+    }
+}
+
 int main(){
 
     char Modo;
-    float **multiplicacoes, **subtracoes, **Amostra, **Vizinhos, **Distancias, **somas, saida, raio;
+    float **multiplicacoes, **subtracoes, **Amostra, **Vizinhos, **Distancias, *somas, *multiplicacoesvet, saida, raio;
     int k, i, j, linhasVizinhos, colunasVizinhos, linhasamostras, x;
 
     scanf("%c", &Modo);
@@ -88,10 +95,10 @@ int main(){
     scanf("%i", &linhasamostras);
     
     x = linhasamostras * linhasVizinhos;
-    somas = (float **) malloc(x * sizeof(float *));
-    for(i=0; i<x; i++){
-        somas[i] = (float *) malloc(colunasVizinhos * sizeof(float));
-    }
+    
+    somas = (float *) malloc(x * sizeof(float));
+    multiplicacaovet = (float *) malloc(x * sizeof(float));
+    
     subtracoes = (float **) malloc(x * sizeof(float *));
     for(i=0; i<x; i++){
         subtracoes[i] = (float *) malloc(colunasVizinhos * sizeof(float));
@@ -116,11 +123,15 @@ int main(){
     switch(Modo){
         case 'E' :
             subtracao(Amostra, Vizinhos, subtracoes, linhasamostras, linhasVizinhos, colunasVizinhos);
-            multiplicacao(multiplicacoes, subtracoes, linhasamostras, linhasVizinhos, colunasVizinhos, 2);
+            multiplicacao(subtracoes, multiplicacoes, linhasamostras, linhasVizinhos, colunasVizinhos, 2);
+            soma(multiplicacoes, soma, linhasamostras, linhasVizinhos, colunasVizinhos);
+            multiplicacaovet(soma, multiplicacoesvet, linhasamostras, linhasVizinhos, (1/2));
             break;
         case 'M' :
             subtracao(Amostra, Vizinhos, subtracoes, linhasamostras, linhasVizinhos, colunasVizinhos);
-            multiplicacao(multiplicacoes, subtracoes, linhasamostras, linhasVizinhos, colunasVizinhos, raio);
+            multiplicacao(subtracoes, multiplicacoes, linhasamostras, linhasVizinhos, colunasVizinhos, raio);
+            soma(multiplicacoes, soma, linhasamostras, linhasVizinhos, colunasVizinhos);
+            multiplicacaovet(soma, multiplicacoesvet, linhasamostras, linhasVizinhos, (1/raio));
             break;
         case 'C' :
             break;

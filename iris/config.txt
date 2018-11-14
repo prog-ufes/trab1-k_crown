@@ -1,5 +1,5 @@
-dataset/iris_treino.csv
-dataset/iris_teste.csv
+iris/dataset/iris_treino.csv
+iris/dataset/iris_teste.csv
 predicoes/
 3, C
 3, M, 0.5

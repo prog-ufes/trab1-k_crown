@@ -141,32 +141,83 @@ int main(){
     for(i=0; i<(linhas-2); i++){
         printf("%i, %c, %f\n", numeroDeVizinhos[i], modoDecalcular[i], raio[i]);
     }
-    printf("%s\n", arquivoteste);
+    
+    int y;
+    FILE *arqtreino;
+    arqtreino = fopen(arquivotreino, "r");
+    if(arqtreino == NULL){
+        printf("Erro");
+        return 1;
+    }
+    while(fread (&c, sizeof(char), 1, arqtreino)) {
+            if(c != '\n') {
+                colunasTreino++;
+            }else{
+                y = colunasTreino;
+                linhasTreino++;
+                colunasTreino = 0;
+            }
+    
+    }
+    printf("%i ", linhasTreino);
+    printf("%i ", y);
+
+    rewind(arqtreino);
+    matrizDeTreino = (float **) realloc(matrizDeTreino, linhasTreino * sizeof(float *));
+    for(i=0; i<linhasTeste; i++){
+        matrizDeTreino[i] = (float *) realloc(matrizDeTreino[i], y * sizeof(float));
+    }
+    i=0;
+    j=0;
+    while(i<linhasTreino){
+        fscanf(arqtreino, "%f%c", &matrizDeTreino[i][j], &c);
+        printf("%f ", matrizDeTreino[i][j]);
+        while(c!='\n'){
+            j++;
+            fscanf(arqtreino, " %f%c", &matrizDeTreino[i][j], &c);
+            printf("%f ", matrizDeTreino[i][j]);
+        }
+        printf("\n");
+        i++;
+        j=0;
+    }
+
+    int w;
     FILE *arqteste;
     arqteste = fopen(arquivoteste, "r");
     if(arqteste == NULL){
         printf("Erro");
         return 1;
     }
+    while(fread (&c, sizeof(char), 1, arqteste)) {
+            if(c != '\n') {
+                colunasTeste++;
+            }else{
+                w = colunasTeste;
+                linhasTeste++;
+                colunasTeste = 0;
+            }
+    
+    }
+
+    rewind(arqteste);
+    matrizDeTeste = (float **) realloc(matrizDeTeste, linhasTeste * sizeof(float *));
+    for(i=0; i<linhasTeste; i++){
+        matrizDeTeste[i] = (float *) realloc(matrizDeTeste[i], w * sizeof(float));
+    }
     i=0;
     j=0;
-    char *f;
-    while(fscanf(arqteste, "%c", &c)){
-        if(c != '\n'){
-            colunasTreino++;
-            matrizDeTreino[i] = (float *) realloc(matrizDeTreino[i], colunasTreino * sizeof(float));
-            f = &c;
-            matrizDeTreino[i][j] = atof(f);
-            printf("%f", matrizDeTreino[i][j]);
+    while(i<linhasTeste){
+        fscanf(arqteste, "%f%c", &matrizDeTeste[i][j], &c);
+        printf("%f ", matrizDeTeste[i][j]);
+        while(c!='\n'){
             j++;
-        }else{
-            linhasTreino++;
-            matrizDeTreino = (float **) realloc(matrizDeTreino, colunasTreino * sizeof(float *));
-            colunasTreino=0;
-            i++;
-            j=0;
-            printf("\n");
+            fscanf(arqteste, " %f%c", &matrizDeTeste[i][j], &c);
+            printf("%f ", matrizDeTeste[i][j]);
         }
+        printf("\n");
+        i++;
+        j=0;
     }
 
     free(todasColunas);

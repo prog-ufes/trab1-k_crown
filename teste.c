@@ -43,12 +43,12 @@ int main(){
     }
     for(i = 0; i < linhas; i++){
         for (j = 0; j < n+1; j++)
-            printf("%.2f\n", vetor[i][j]);
+            printf("%.2f ", vetor[i][j]);
+        putchar('\n');
         free(vetor[i]);
     }
     free(str);
-    // free(vetor);
-    // free(vetor[i]);
+    free(vetor);
     fclose(file);
     return 0;
 

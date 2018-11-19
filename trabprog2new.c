@@ -43,17 +43,13 @@ int main(){
     int colunas=0, i=0, j=0, linhas=0, colunasTeste=0, colunasTreino=0, linhasTeste=0, linhasTreino=0, *todasColunas;
     float **matrizDeTeste, **matrizDeTreino;
     int n;
-
-    todasColunas = (int *) malloc(1 * sizeof(int));
-
-    matrizDeTreino = (float **) malloc(1*sizeof(float*));
-    for(j=0; j<1; j++){
-        matrizDeTreino[j] = (float *) malloc(1*sizeof(float));
-    }
+    
     matrizDeTeste = (float **) malloc(1*sizeof(float*));
     for(j=0; j<1; j++){
         matrizDeTeste[j] = (float *) malloc(1*sizeof(float));
     }
+
+    todasColunas = (int *) malloc(1 * sizeof(int));
 
     printf("Escolha o tipo a ser analizado (i-iris/ v-vowels): ");
     scanf(" %c", &tipo);
@@ -68,7 +64,7 @@ int main(){
         printf("Erro");
         exit(1);
     }
-
+    //Conta o número de linhas e colunas
     while(fread (&c, sizeof(char), 1, arq)) {
         if(c != '\n') {
             colunas++;
@@ -182,6 +178,60 @@ int main(){
         printf("%i, %c, %f\n", numeroDeVizinhos[i], modoDecalcular[i], raio[i]);
     }
     fclose(arq);
+
+    FILE *arqTreino;
+    arqTreino = fopen(arquivotreino, "r");
+    if(arqTreino == NULL){
+        printf("Erro");
+        exit(1);
+    }
+    //Conta o número de linhas e colunas
+    while(fread (&c, sizeof(char), 1, arqTreino)) {
+        if(c != '\n') {
+            if(linhasTreino==0){
+                if(c !=','){
+                    colunasTreino++;
+                }
+                if(c =='.'){
+                    colunasTreino = colunasTreino -3;
+                }   
+            }
+        }else{
+            linhasTreino++;
+        }
+    }
+    printf("%i ", linhasTreino);
+    printf("%i\n", colunasTreino);
+    matrizDeTreino = (float **) malloc(linhasTreino*sizeof(float*));
+    for(j=0; j<1; j++){
+        matrizDeTreino[j] = (float *) malloc(colunasTreino*sizeof(float));
+    }
+    rewind(arqTreino);
+    i=0;
+    j=0;
+    while(i<linhasTreino){
+        switch(j){
+            case 0 : 
+                fscanf(arqTreino, "%f,", &matrizDeTreino[i][j]);
+                j++;
+                break;
+            default :
+                fscanf(arqTreino, "%f%c", &matrizDeTreino[i][j], &c);
+                j++;
+                if(c == '\n'){
+                    j=0;
+                    i++;
+                }
+                break;
+        }
+    }
+
+    for(i=0; i<linhasTreino; i++){
+        for(j=0; j<colunasTreino; j++){
+            printf("%f ", matrizDeTreino[i][j]);
+        }
+        printf("\n");
+    }
 
     free(todasColunas);
 

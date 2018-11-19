@@ -3,39 +3,6 @@
 #include<math.h>
 #include<string.h>
 
-void quick_sort(float *amostrasvizinhas, int primeiro, int ultimo) {
-    int i, j, z;
-    float x, y;
-     
-    i = primeiro;
-    j = ultimo;
-    z= (primeiro + ultimo) / 2;
-    x = amostrasvizinhas[z];
-     
-    while(i <= j) {
-        while(amostrasvizinhas[i] < x && i < ultimo) {
-            i++;
-        }
-        while(amostrasvizinhas[j] > x && j > primeiro) {
-            j--;
-        }
-        if(i <= j) {
-            y = amostrasvizinhas[i];
-            amostrasvizinhas[i] = amostrasvizinhas[j];
-            amostrasvizinhas[j] = y;
-            i++;
-            j--;
-        }
-    }
-     
-    if(j > primeiro) {
-        quick_sort(amostrasvizinhas, primeiro, j);
-    }
-    if(i < ultimo) {
-        quick_sort(amostrasvizinhas, i, ultimo);
-    }
-}
-
 void soma(float **Entrada, float *Saida, int linhasamostras, int linhasVizinhos, int colunasVizinhos){
     int i, j;
     for(i=0; i<(linhasamostras * linhasVizinhos); i++){

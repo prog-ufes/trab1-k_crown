@@ -107,44 +107,76 @@ int main(){
     }
 
     // Distancia Euclidiana
-    float soma = 0;
-    for(i = 0; i < linhas2; i++){
-        for(j = 0; j < linhas; j++){
-            for (int k = 0; k < n; k++){
-                soma = pow(vetor2[i][k] - vetor[j][k], 2) + soma;
-            }
-            vetor3[i][j] = sqrt(soma);
-            soma = 0;
-        }
-    }
-    // Vetor de distancias de cada ponto j em realção a estrela i
+    // float soma = 0;
+    // for(i = 0; i < linhas2; i++){
+    //     for(j = 0; j < linhas; j++){
+    //         for (int k = 0; k < n; k++){
+    //             soma = pow(vetor2[i][k] - vetor[j][k], 2) + soma;
+    //         }
+    //         vetor3[i][j] = sqrt(soma);
+    //         soma = 0;
+    //     }
+    // }
+    // print vetor de distancias euclidianas de cada ponto j em realção a estrela i
     // for (i = 0; i < linhas2; i++){
     //     printf("Vetor %d:\n", i+1);
     //     for (j = 0; j < linhas; j++){
     //         printf("%.2f ---- %.2f\n", vetor3[i][j], vetor4[i][j]);
     //     }
     // }
-    //sorted
-    for (i = 0; i < linhas2; i++){
-        printf("Vetor %d:\n", i+1);
-        bubblesort(vetor3[i], linhas, vetor4[i]);
-        for (j = 0; j < linhas; j++){
-            printf("%.2f ---- %.2f\n", vetor3[i][j], vetor4[i][j]);
-        }
-    }
+    //sorted(Euclidiana)
+    // for (i = 0; i < linhas2; i++){
+    //     printf("Vetor %d:\n", i+1);
+    //     bubblesort(vetor3[i], linhas, vetor4[i]);
+    //     for (j = 0; j < linhas; j++){
+    //         printf("%.2f ---- %.2f\n", vetor3[i][j], vetor4[i][j]);
+    //     }
+    // }
+    // Distancia de Chebyshev
+    // float max = 0;
+    // for(i = 0; i < linhas2; i++){
+    //     for(j = 0; j < linhas; j++){
+    //         for (int k = 0; k < n; k++){
+    //             if (k == 0){
+    //             max = fabs(vetor2[i][k] - vetor[j][k]);
+    //             }
+    //             if (fabs(vetor2[i][k] - vetor[j][k]) > max){
+    //                 max = fabs(vetor2[i][k] - vetor[j][k]);
+    //             }
+    //         }
+    //         vetor3[i][j] = max;
+    //     }
+    // }
+    //print vetor de distancias chebyshevianas de cada ponto j em realção a estrela i
+    // for (i = 0; i < linhas2; i++){
+    //     printf("Vetor %d:\n", i+1);
+    //     for (j = 0; j < linhas; j++){
+    //         printf("%.2f ---- %.2f\n", vetor3[i][j], vetor4[i][j]);
+    //     }
+    // }
+    //sorted Chebyshev
+    // for (i = 0; i < linhas2; i++){
+    //     printf("Vetor %d:\n", i+1);
+    //     bubblesort(vetor3[i], linhas, vetor4[i]);
+    //     for (j = 0; j < linhas; j++){
+    //         printf("%.2f ---- %.2f\n", vetor3[i][j], vetor4[i][j]);
+    //     }
+    // }
     //Printando a matriz 1
     for(i = 0; i < linhas; i++){
-        for (j = 0; j < n+1; j++)
-            printf("%.2f ", vetor[i][j]);
-        putchar('\n');
+        // for (j = 0; j < n+1; j++){
+        //      printf("%.2f ", vetor[i][j]);
+        // }
+        //  putchar('\n');
         free(vetor[i]);
     }
     puts("*****************************************");
     //Printando a matriz 2
     for(i = 0; i < linhas2; i++){
-        for (j = 0; j < n; j++)
-            printf("%.2f ", vetor2[i][j]);
-        putchar('\n');
+        // for (j = 0; j < n; j++){
+        //     printf("%.2f ", vetor2[i][j]);
+        // }
+        // putchar('\n');
         free(vetor2[i]);
     }
     free(str);

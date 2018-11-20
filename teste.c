@@ -24,6 +24,7 @@ void bubblesort(float vetor[], int n, float vetor2[]){
 
 int main(){
     FILE *file = fopen("teste1.txt", "r"), *file2 = fopen("teste2.txt", "r");
+    float r = 1;
     char *str = malloc(sizeof(char)*1000), *str2 = malloc(sizeof(char)*1000);
     if (file == NULL) {
     printf ("Erro na abertura de arquivo! Programa terminado...");
@@ -132,6 +133,32 @@ int main(){
     //         printf("%.2f ---- %.2f\n", vetor3[i][j], vetor4[i][j]);
     //     }
     // }
+    //Distancia de Mikowski 
+    float soma = 0;
+    for(i = 0; i < linhas2; i++){
+        for(j = 0; j < linhas; j++){
+            for (int k = 0; k < n; k++){
+                soma = pow(fabs(vetor2[i][k] - vetor[j][k]), r) + soma;
+            }
+            vetor3[i][j] = pow(soma, 1/r);
+            soma = 0;
+        }
+    }
+    // print vetor de distancias mikowskianas de cada ponto j em realção a estrela i
+    for (i = 0; i < linhas2; i++){
+        printf("Vetor %d:\n", i+1);
+        for (j = 0; j < linhas; j++){
+            printf("%.2f ---- %.2f\n", vetor3[i][j], vetor4[i][j]);
+        }
+    }
+    //sorted(Mikowskiana)
+    for (i = 0; i < linhas2; i++){
+        printf("Vetor %d:\n", i+1);
+        bubblesort(vetor3[i], linhas, vetor4[i]);
+        for (j = 0; j < linhas; j++){
+            printf("%.2f ---- %.2f\n", vetor3[i][j], vetor4[i][j]);
+        }
+    }
     // Distancia de Chebyshev
     // float max = 0;
     // for(i = 0; i < linhas2; i++){

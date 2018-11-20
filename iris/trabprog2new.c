@@ -4,37 +4,88 @@
 #include<string.h>
 
 //Ordena do menor para o maior
-void quick_sort(float *amostrasvizinhas, int primeiro, int ultimo) {
+void quick_sort(float *Distancias, int primeiro, int ultimo) {
     int i, j, z;
     float x, y;
      
     i = primeiro;
     j = ultimo;
     z= (primeiro + ultimo) / 2;
-    x = amostrasvizinhas[z];
+    x = Distancias[z];
      
     while(i <= j) {
-        while(amostrasvizinhas[i] < x && i < ultimo) {
+        while(Distancias[i] < x && i < ultimo) {
             i++;
         }
-        while(amostrasvizinhas[j] > x && j > primeiro) {
+        while(Distancias[j] > x && j > primeiro) {
             j--;
         }
         if(i <= j) {
-            y = amostrasvizinhas[i];
-            amostrasvizinhas[i] = amostrasvizinhas[j];
-            amostrasvizinhas[j] = y;
+            y = Distancias[i];
+            Distancias[i] = Distancias[j];
+            Distancias[j] = y;
             i++;
             j--;
         }
     }
      
     if(j > primeiro) {
-        quick_sort(amostrasvizinhas, primeiro, j);
+        quick_sort(Distancias, primeiro, j);
     }
     if(i < ultimo) {
-        quick_sort(amostrasvizinhas, i, ultimo);
+        quick_sort(Distancias, i, ultimo);
     }
+}
+
+void soma(float **multiplicacoes, float *somas, int linhasTeste, int linhasTreino, int m){
+    int i, j;
+    for(i=0; i<(linhasTeste * linhasTreino); i++){
+        somas[i] = 0;
+    }
+    for(i=0; i<(linhasTeste * linhasTreino); i++){
+        for(j=0; j<m; j++){
+            somas[i] = somas[i] + multiplicacoes[i][j];
+        }
+    }
+}
+
+void subtracao(float **matrizTeste, float **matrizTreino, float **subtracoes, int linhasTeste, int linhasTreino, int m){
+    int i=0, j=0, l=0, n=0;
+    while(l<linhasTeste){
+        while(i<linhasTreino){
+            while(j<m){
+                subtracoes[n][j] = matrizTeste[l][j] - matrizTreino[i][j];
+                j++;
+            }
+            n++;
+            i++;
+            j=0;
+        }
+        l++;
+        i=0;
+        j=0;
+    }
+}
+
+void multiplicacaoMat(float **subtracoes, float **multiplicacoes, int linhasTeste, int linhasTreino, int m, float n){
+    int i, j;
+    for(i=0; i<(linhasTeste * linhasTreino); i++){
+        for(j=0; j<m; j++){
+            multiplicacoes[i][j] = pow(subtracoes[i][j],n);
+        }
+    }
+}
+
+void multiplicacaoVet(float *somas, float **Distancias, int linhasTeste, int linhasTreino, float n){
+    int i, l=0, j=0;
+    for(i=0; i<(linhasTeste * linhasTreino); i++){
+        Distancias[l][j] = pow(somas[i],n);
+        j++;
+        if(j==(linhasTreino-1)){
+            j=0;
+            l++;
+        }
+    }  
 }
 
 int main(){
@@ -243,6 +294,85 @@ int main(){
     
     fclose(fileteste);
 
+    int x = linhasTreino * linhasTeste;
+    int w;
+
+    float *somas = (float *) malloc(x * sizeof(float));
+    float *multiplicacaovet = (float *) malloc(x * sizeof(float));
+    
+    float **subtracoes = (float **) malloc(x * sizeof(float *));
+    for(i=0; i<x; i++){
+        subtracoes[i] = (float *) malloc(m * sizeof(float));
+    }
+    float **multiplicacoes = (float **) malloc(x * sizeof(float *));
+    for(i=0; i<x; i++){
+        multiplicacoes[i] = (float *) malloc(m * sizeof(float));
+    }
+    float **Distancias = (float **) malloc(linhasTeste * sizeof(float*));
+    for(i=0; i<linhasTeste; i++){
+        Distancias[i] = (float *) malloc(m * sizeof(float));
+    }
+    float **kDistancias = (float **) malloc(linhasTeste * sizeof(float*));
+    for(j=0; j<linhasTeste; j++){
+        kDistancias[j] = (float *) malloc(1 * sizeof(float));
+    }
+
+    for(i=0; i<strlen(modoDecalcular); i++){
+        switch(modoDecalcular[i]){
+        case 'E' :
+            subtracao(matrizTeste, matrizTreino, subtracoes, linhasTeste, linhasTreino,  m);
+            printf("%f ", subtracoes[0][0]);
+            multiplicacaoMat(subtracoes, multiplicacoes, linhasTeste, linhasTreino, m, 2);
+            soma(multiplicacoes, somas, linhasTeste, linhasTreino, m);
+            multiplicacaoVet(somas, Distancias, linhasTeste, linhasTreino, (1/2));
+            for(j=0; j<linhasTeste; j++){
+                quick_sort(Distancias[j], 0, (m-1));
+            }
+            for(j=0; j<linhasTeste; j++){
+                kDistancias[j] = (float *) realloc(kDistancias[j], numeroDeVizinhos[i] * sizeof(float));
+            }
+            for(j=0; j<linhasTeste; j++){
+                for(w=0; w<numeroDeVizinhos[i]; w++){
+                    kDistancias[j][w] = Distancias[j][w];
+                }
+            }
+            printf("%f ", kDistancias[0][0]);
+            break;
+        case 'M' :
+            subtracao(matrizTeste, matrizTreino, subtracoes, linhasTeste, linhasTreino,  m);
+            printf("%f ", subtracoes[0][0]);
+            multiplicacaoMat(subtracoes, multiplicacoes, linhasTeste, linhasTreino, m, raio[i]);
+            soma(multiplicacoes, somas, linhasTeste, linhasTreino, m);
+            multiplicacaoVet(somas, Distancias, linhasTeste, linhasTreino, (1/raio[i]));
+            for(j=0; j<linhasTeste; j++){
+                quick_sort(Distancias[j], 0, (m-1));
+            }
+            for(j=0; j<linhasTeste; j++){
+                kDistancias[j] = (float *) realloc(kDistancias[j], numeroDeVizinhos[i] * sizeof(float));
+            }
+            for(j=0; j<linhasTeste; j++){
+                for(w=0; w<numeroDeVizinhos[i]; w++){
+                    kDistancias[j][w] = Distancias[j][w];
+                }
+            }
+            printf("%f ", kDistancias[0][0]);
+            break;
+        /*case 'C' :
+            
+            float **kDistancias = (float **) malloc(linhasTeste * sizeof(float*));
+            for(i=0; i<linhasTeste; i++){
+                kDistancias[i] = (float *) malloc(numeroDeVizinhos[i] * sizeof(float));
+            }break;*/
+        }
+    }
+
+    for(j=0; j<linhasTeste; j++){
+        for(w=0; w<numeroDeVizinhos[i]; w++){
+            printf("%f ", kDistancias[j][w]);
+        }
+        printf("\n");
+    }
+
     free(str);
     for(i = 0; i < linhasTreino; i++){
         free(matrizTreino[i]);
@@ -263,6 +393,29 @@ int main(){
     free(modoDecalcular);
     free(numeroDeVizinhos);
     free(raio);
+
+    free(somas);
+    free(multiplicacaovet);
+
+    for(i=0; i<x; i++){
+        free(subtracoes[i]);
+    }
+    free(subtracoes);
+
+    for(i=0; i<x; i++){
+        free(multiplicacoes[i]);
+    }
+    free(multiplicacoes);
+
+    for(i=0; i<linhasTeste; i++){
+        free(Distancias[i]);
+    }
+    free(Distancias);
+
+    for(i=0; i<linhasTeste; i++){
+        free(kDistancias[i]);
+    }
+    free(kDistancias);
 
     return 0;
 }

@@ -3,25 +3,6 @@
 #include<math.h>
 #include<string.h>
 
-void troca(float *n, float *m){
-    float aux;
-    aux = *n;
-    *n = *m;
-    *m = aux;
-}
-
-void bubblesort(float vetor[], int n, float vetor2[]){
-    int i, j;
-    for (i = 0; i< n  - 1; i++){
-        for (j = 0; j < n - i -1; j++){
-            if (vetor[j] > vetor[j+1]){
-                troca(&vetor[j], &vetor[j+1]);
-                troca(&vetor2[j], &vetor2[j+1]);
-            }
-        }
-    }
-}
-
 void subtracao(float **Amostra, float **Vizinhos, float **subtracoes, int linhasamostras, int linhasVizinhos, int colunasVizinhos){
     int i=0, j=0, l=0, m=0;
     while(l<linhasamostras){
@@ -131,6 +112,25 @@ void multiplicacaovet(float **Entrada, float **multiplicacoes, int linhasamostra
         j++;
         multiplicacoes[i][j] = Entrada[i][j];
         j=0;
+    }
+}
+
+void troca(float *n, float *m){
+    float aux;
+    aux = *n;
+    *n = *m;
+    *m = aux;
+}
+
+void bubblesort(float **vetor, int n, int w){
+    int i, j;
+    for (j = 0; j< n  - 1; j++){
+        for (i = w; i < n - j -1; i++){
+            if (vetor[i][0] > vetor[i+1][0]){
+                troca(&vetor[i][0], &vetor[i+1][0]);
+                troca(&vetor[i][1], &vetor[i+1][1]);
+            }
+        }
     }
 }
 

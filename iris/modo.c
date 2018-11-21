@@ -134,11 +134,168 @@ void bubblesort(float **vetor, int n, int w){
     }
 }
 
+void lerConfig(int *linhasconfig, int *todasColunas, int *numeroDeVizinhos, float *raio, char *modoDecalcular, char *arquivoteste, char *arquivotreino, char *predicoes){
+    char c, url[]="config.txt";
+    int colunas=0, i=0, j=0, linhas=0;
+    int y;
+
+    FILE *arq;
+    arq = fopen(url, "r");
+    if(arq == NULL){
+        printf("Erro");
+        exit(1);
+    }
+    //Conta o número de linhas e colunas
+    while(fread (&c, sizeof(char), 1, arq)) {
+        if(c != '\n') {
+            colunas++;
+        }else{
+            y = linhas + 1;
+            todasColunas = (int *) realloc(todasColunas, y * sizeof(int));
+            if(linhas<3){
+                todasColunas[linhas] = colunas + 1;
+                linhas++;
+                colunas = 0;
+            }else{
+                todasColunas[linhas] = colunas ;
+                linhas++;
+                colunas = 0;
+            }
+        }
+    }
+
+    linhasconfig = &linhas;
+
+    arquivotreino = (char *) realloc(arquivotreino, todasColunas[0] * sizeof(char));
+    arquivoteste = (char *) realloc(arquivoteste, todasColunas[1] * sizeof(char));
+    predicoes = (char *) realloc(predicoes, todasColunas[2] * sizeof(char));
+    modoDecalcular = (char *) realloc(modoDecalcular, (linhas - 2) * sizeof(char));
+    numeroDeVizinhos = (int *) realloc(numeroDeVizinhos, (linhas - 3) * sizeof(int));
+    raio = (float *) realloc(raio, (linhas - 3) * sizeof(float));
+    
+    rewind(arq);
+    int linhas1 = 0;
+    //Aloca os vetores de arquivos e de entradas
+    while(linhas1<linhas){
+        while(fread (&c, sizeof(char), 1, arq) && linhas1 <3){
+            if(c != '\n'){
+                switch(linhas1){
+                    case 0: arquivotreino[i] = c;
+                            i++;
+                            break;
+                    case 1: arquivoteste[i] = c;                            
+                            i++;
+                            break;
+                    case 2: predicoes[i] = c;                           
+                            i++;
+                            break;
+                }
+            }else{
+                linhas1++;
+                i=0;
+            }
+        }
+        if(linhas1 == 3){
+            numeroDeVizinhos[i] = c -'0';
+            fscanf(arq, " , %c", &modoDecalcular[i]);
+            if(modoDecalcular[i] == 'M'){
+            fscanf(arq, ", %f", &raio[i]);
+            }else{
+                raio[i]=0;
+            }
+            i++;
+            linhas1++;
+        }else{
+            fscanf(arq, "%i, %c", &numeroDeVizinhos[i], &modoDecalcular[i]);
+            if(modoDecalcular[i] == 'M'){
+                fscanf(arq, ", %f", &raio[i]);
+            }else{
+                raio[i]=0;
+            }
+            i++;
+            linhas1++;
+        }
+    }
+        
+    for(i=0; i<strlen(arquivotreino); i++){
+        printf("%c", arquivotreino[i]);
+    }
+    printf("\n");
+    for(i=0; i<strlen(arquivoteste); i++){
+        printf("%c", arquivoteste[i]);
+    }
+    printf("\n");
+    for(i=0; i<strlen(predicoes); i++){
+        printf("%c", predicoes[i]);
+    }
+    printf("\n");
+    for(i=0; i<(linhas-3); i++){
+        printf("%i, %c, %.2f\n", numeroDeVizinhos[i], modoDecalcular[i], raio[i]);
+    }
+    putchar('\n');
+    fclose(arq);
+}
+
+void lerArquivo(char *arquivo, int *linhasArquivo, int *colunasArquivo, float **matriz){
+    FILE *file = fopen(arquivo, "r");
+    char *str = malloc(sizeof(char)*1000);
+    if (file == NULL) {
+    printf ("Erro na abertura de arquivo! Programa terminado...");
+    exit (1);
+    }
+    int n = 0, linhas2 = 0, quebra = 0, j = 0, i;
+    while(!feof(file)){
+        //fscanf(file, "%[^\n]", str);
+        fgets(str, 1000, file);
+        if( quebra == 0){
+            for(i = 0; i < strlen(str); i++){
+                if (str[i] == ','){
+                    n++;
+                }
+            }
+            quebra++;
+        }
+        linhas2++;
+    }
+    int linhas;
+    linhas = linhas2 -1;
+    linhasArquivo = &linhas;
+    rewind(file);
+    matriz = realloc(matriz, sizeof(float*) * linhas);
+    for (i = 0; i < linhas; i++){
+        matriz[i] = realloc(matriz[i], sizeof(float)*(n+1));
+    }
+    for (i = 0; i < linhas; i++){
+        fgets(str, 1000, file);
+        char *strnew = NULL;
+        strnew = strtok(str, ",\n");
+        while(strnew != NULL){
+            matriz[i][j] = atof(strnew);
+            strnew = strtok(NULL, ",\n");
+            j++;
+        }
+        j = 0;
+    }
+    for(i = 0; i < linhas; i++){
+        for (j = 0; j < n+1; j++)
+            printf("%.2f ", matriz[i][j]);
+        putchar('\n');
+    }
+    putchar('\n');
+    
+    fclose(file);
+    n = n +1;
+    colunasArquivo = &n;
+}
+
 int main(){
 
     float **treino, **teste, r;
-    int linhasteste, linhastreino, colunastreino, i, j;
+    int linhasteste, linhastreino, colunastreino, *linhasteste1, *linhastreino1, *colunastreino1, *colunasteste1, i, j, *todasColunas;
     char tipo;
+    char *arquivotreino, *arquivoteste, *predicoes, *modoDecalcular;
+    int *numeroDeVizinhos, *linhasconfig, *linhasArquivo,  *colunasArquivo;
+    float *raio;
 
     scanf(" %c", &tipo);
     if(tipo == 'M'){
@@ -148,24 +305,37 @@ int main(){
     scanf(" %i", &linhasteste); 
     scanf(" %i", &colunastreino);
 
-    treino = (float **) malloc(sizeof(float *) * linhastreino);
+    todasColunas = (int *) malloc(1 * sizeof(int));
+    arquivotreino = (char *) malloc(2 * sizeof(char));
+    arquivoteste = (char *) malloc(2 * sizeof(char));
+    predicoes = (char *) malloc(2 * sizeof(char));
+    modoDecalcular = (char *) malloc(2 * sizeof(char));
+    numeroDeVizinhos = (int *) malloc(2 * sizeof(int));
+    raio = (float *) malloc(2 * sizeof(float));
+
+    lerConfig(linhasconfig, todasColunas, numeroDeVizinhos, raio, modoDecalcular, arquivoteste, arquivotreino, predicoes);
+
+    float **matriztreino = malloc(sizeof(float*) * 2);
+    for (i = 0; i < 2; i++){
+        matriztreino[i] = malloc(sizeof(float)*2);
+    }
+    float **matrizteste = malloc(sizeof(float*) * 2);
+    for (i = 0; i < 2; i++){
+        matrizteste[i] = malloc(sizeof(float)*2);
+    }
+
+    lerArquivo(arquivotreino, linhastreino1, colunastreino1, matriztreino);
+    lerArquivo(arquivoteste, linhasteste1, colunasteste1, matrizteste);
+
+    treino = (float **) malloc(sizeof(float *) * 2);
     for(i=0; i<linhastreino; i++){
-        treino[i] = (float *) malloc(sizeof(float) * colunastreino);
+        treino[i] = (float *) malloc(sizeof(float) * 2);
     }
-    for(i=0; i<linhastreino; i++){
-        for(j=0; j<colunastreino; j++){
-            scanf("%f", &treino[i][j]);
-        }
-    }
-    teste = (float **) malloc(sizeof(float *) * linhasteste);
+    teste = (float **) malloc(sizeof(float *) * 2);
     for(i=0; i<linhasteste; i++){
-        teste[i] = (float *) malloc(sizeof(float) * colunastreino);
+        teste[i] = (float *) malloc(sizeof(float) * 2);
     }
-    for(i=0; i<linhasteste; i++){
-        for(j=0; j<colunastreino; j++){
-            scanf("%f", &teste[i][j]);
-        }
-    }
+    
     float **subtracoes = (float **) malloc(sizeof(float *) * linhasteste * linhastreino);
     for(i=0; i<(linhasteste * linhastreino); i++){
         subtracoes[i] = (float *) malloc(sizeof(float) * colunastreino);
@@ -269,6 +439,14 @@ int main(){
         free(distancia[i]);
     }
     free(distancia);
+
+    free(raio);
+    free(todasColunas);
+    free(modoDecalcular);
+    free(numeroDeVizinhos);
+    free(arquivoteste);
+    free(arquivotreino);
+    free(predicoes);
 
     return 0;
 }

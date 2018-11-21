@@ -3,6 +3,137 @@
 #include<math.h>
 #include<string.h>
 
+void troca(float *n, float *m){
+    float aux;
+    aux = *n;
+    *n = *m;
+    *m = aux;
+}
+
+void bubblesort(float vetor[], int n, float vetor2[]){
+    int i, j;
+    for (i = 0; i< n  - 1; i++){
+        for (j = 0; j < n - i -1; j++){
+            if (vetor[j] > vetor[j+1]){
+                troca(&vetor[j], &vetor[j+1]);
+                troca(&vetor2[j], &vetor2[j+1]);
+            }
+        }
+    }
+}
+
+void subtracao(float **Amostra, float **Vizinhos, float **subtracoes, int linhasamostras, int linhasVizinhos, int colunasVizinhos){
+    int i=0, j=0, l=0, m=0;
+    while(l<linhasamostras){
+        while(i<linhasVizinhos){
+            while(j<(colunasVizinhos-1)){
+                subtracoes[m][j] = Amostra[l][j] - Vizinhos[i][j];
+                j++;
+            }
+            subtracoes[m][j] = Vizinhos[i][j];
+            m++;
+            i++;
+            j=0;
+        }
+        l++;
+        i=0;
+        j=0;
+    }
+}
+
+void subtracaovet(float **Amostra, float **Vizinhos, float **subtracoes, int linhasamostras, int linhasVizinhos){
+    int i=0, j=0, l=0, m=0;
+    while(l<linhasamostras){
+        while(i<linhasVizinhos){
+            while(j<1){
+                subtracoes[m][j] = Amostra[l][j] - Vizinhos[i][j];
+                j++;
+            }
+            subtracoes[m][j] = Vizinhos[i][j];
+            m++;
+            i++;
+            j=0;
+        }
+        l++;
+        i=0;
+        j=0;
+    }
+}
+
+void subtracaomodulo(float **Amostra, float **Vizinhos, float **subtracoes, int linhasamostras, int linhasVizinhos, int colunasVizinhos){
+    int i=0, j=0, l=0, m=0;
+    while(l<linhasamostras){
+        while(i<linhasVizinhos){
+            while(j<(colunasVizinhos-1)){
+                subtracoes[m][j] = abs(Amostra[l][j] - Vizinhos[i][j]);
+                j++;
+            }
+            subtracoes[m][j] = Vizinhos[i][j];
+            m++;
+            i++;
+            j=0;
+        }
+        l++;
+        i=0;
+        j=0;
+    }
+}
+
+
+void multiplicacao(float **Entrada, float **multiplicacoes, int linhasamostras, int linhasVizinhos, int colunasVizinhos, float n){
+    int i, j;
+    for(i=0; i<(linhasamostras * linhasVizinhos); i++){
+        for(j=0; j<(colunasVizinhos-1); j++){
+            multiplicacoes[i][j] = pow(Entrada[i][j],n);
+        }
+        multiplicacoes[i][j] = Entrada[i][j];
+    }
+}
+
+void soma(float **Entrada, float **Saida, int linhasamostras, int linhasVizinhos, int colunasVizinhos){
+    int i, j, k=0;
+    for(i=0; i<(linhasamostras * linhasVizinhos); i++){
+        for(j=0; j<2; j++){
+            Saida[i][j] = 0;
+        }
+    }
+    for(i=0; i<(linhasamostras * linhasVizinhos); i++){
+        for(j=0; j<(colunasVizinhos-1); j++){
+            Saida[i][k] = Saida[i][k] + Entrada[i][j];
+        }
+        k++;
+        Saida[i][k] = Entrada[i][j];
+        k=0;
+    }
+}
+
+void somamat(float **Entrada, float **Saida, int linhasamostras, int colunasVizinhos){
+    int i, j, k=0;
+    for(i=0; i<linhasamostras; i++){
+        for(j=0; j<2; j++){
+            Saida[i][j] = 0;
+        }
+    }
+    for(i=0; i<linhasamostras; i++){
+        for(j=0; j<(colunasVizinhos-1); j++){
+            Saida[i][k] = Saida[i][k] + Entrada[i][j];
+        }
+        k++;
+        Saida[i][k] = Entrada[i][j];
+        k=0;
+    }
+}
+
+void multiplicacaovet(float **Entrada, float **multiplicacoes, int linhasamostras, int linhasVizinhos, float n){
+    int i, j=0;
+    for(i=0; i<(linhasamostras * linhasVizinhos); i++){
+        multiplicacoes[i][j] = pow(Entrada[i][j],n);
+        j++;
+        multiplicacoes[i][j] = Entrada[i][j];
+        j=0;
+    }
+}
+
 int main(){
 
     char c, url[]="config.txt";

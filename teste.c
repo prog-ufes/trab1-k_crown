@@ -93,12 +93,12 @@ int main(){
     }
     //alocando memoria para o resultado da distancia
     float **vetor3 = malloc(sizeof(float*) * linhas2);
-    for (i = 0; i < linhas; i++){
+    for (i = 0; i < linhas2; i++){
         vetor3[i] = malloc(sizeof(float)*linhas);
     }
     //alocando memoria para o rotulo do vetor;
     float **vetor4 = malloc(sizeof(float*) * linhas2);
-    for (i = 0; i < linhas; i++){
+    for (i = 0; i < linhas2; i++){
         vetor4[i] = malloc(sizeof(float)*linhas);
     }
     //Quebrando a string em varias para converter o valores 1
@@ -156,7 +156,7 @@ int main(){
     // }
     //sorted(Euclidiana)
     for (i = 0; i < linhas2; i++){
-        printf("Vetor %d:\n", i+1);
+        // printf("Vetor %d:\n", i+1);
         bubblesort(vetor3[i], linhas, vetor4[i]);
         for (j = 0; j < linhas; j++){
             // printf("%.2f ---- %.2f\n", vetor3[i][j], vetor4[i][j]);

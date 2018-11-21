@@ -115,6 +115,25 @@ void multiplicacaovet(float **Entrada, float **multiplicacoes, int linhasamostra
     }
 }
 
+void troca(float *n, float *m){
+    float aux;
+    aux = *n;
+    *n = *m;
+    *m = aux;
+}
+
+void bubblesort(float **vetor, int n, int w){
+    int i, j;
+    for (j = 0; j< n  - 1; j++){
+        for (i = w; i < n - j -1; i++){
+            if (vetor[i][0] > vetor[i+1][0]){
+                troca(&vetor[i][0], &vetor[i+1][0]);
+                troca(&vetor[i][1], &vetor[i+1][1]);
+            }
+        }
+    }
+}
+
 int main(){
 
     float **treino, **teste, r;
@@ -178,6 +197,9 @@ int main(){
                 multiplicacao(subtracoes, multiplicacoes, linhasteste, linhastreino, colunastreino, 2);
                 soma(multiplicacoes, somas, linhasteste, linhastreino, colunastreino);
                 multiplicacaovet(somas, distancia, linhasteste, linhastreino, 0.5);
+                for(i=0; i<linhasteste; i++){
+                    bubblesort(distancia, (i+1)*linhastreino, i*linhastreino);
+                }
                 for(i=0; i<(linhasteste * linhastreino); i++){
                     for(j=0; j<2; j++){
                         printf("%.2f ", distancia[i][j]);
@@ -191,6 +213,9 @@ int main(){
                 multiplicacao(subtracoes, multiplicacoes, linhasteste, linhastreino, colunastreino, r);
                 soma(multiplicacoes, somas, linhasteste, linhastreino, colunastreino);
                 multiplicacaovet(somas, distancia, linhasteste, linhastreino, (1/r));
+                for(i=0; i<linhasteste; i++){
+                    bubblesort(distancia, (i+1)*linhastreino, i*linhastreino);
+                }
                 for(i=0; i<(linhasteste * linhastreino); i++){
                     for(j=0; j<2; j++){
                         printf("%.2f ", distancia[i][j]);
@@ -203,6 +228,9 @@ int main(){
                 somamat(teste, somasteste, linhasteste, colunastreino);
                 somamat(treino, somastreino, linhastreino, colunastreino);
                 subtracaovet(somasteste, somastreino, subtracoes, linhasteste, linhastreino);
+                for(i=0; i<linhasteste; i++){
+                    bubblesort(distancia, (i+1)*linhastreino, i*linhastreino);
+                }
                 for(i=0; i<(linhasteste * linhastreino); i++){
                     for(j=0; j<2; j++){
                         printf("%.2f ", subtracoes[i][j]);

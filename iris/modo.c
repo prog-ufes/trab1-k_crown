@@ -139,6 +139,8 @@ void lerConfig(int *linhasconfig, int *todasColunas, int *numeroDeVizinhos, floa
     int colunas=0, i=0, j=0, linhas=0;
     int y;
 
+    todasColunas = (int *) malloc(1 * sizeof(int));
+
     FILE *arq;
     arq = fopen(url, "r");
     if(arq == NULL){
@@ -166,12 +168,12 @@ void lerConfig(int *linhasconfig, int *todasColunas, int *numeroDeVizinhos, floa
 
     linhasconfig = &linhas;
 
-    arquivotreino = (char *) realloc(arquivotreino, todasColunas[0] * sizeof(char));
-    arquivoteste = (char *) realloc(arquivoteste, todasColunas[1] * sizeof(char));
-    predicoes = (char *) realloc(predicoes, todasColunas[2] * sizeof(char));
-    modoDecalcular = (char *) realloc(modoDecalcular, (linhas - 2) * sizeof(char));
-    numeroDeVizinhos = (int *) realloc(numeroDeVizinhos, (linhas - 3) * sizeof(int));
-    raio = (float *) realloc(raio, (linhas - 3) * sizeof(float));
+    arquivotreino = (char *) malloc(todasColunas[0] * sizeof(char));
+    arquivoteste = (char *) malloc(todasColunas[1] * sizeof(char));
+    predicoes = (char *) malloc(todasColunas[2] * sizeof(char));
+    modoDecalcular = (char *) malloc((linhas - 2) * sizeof(char));
+    numeroDeVizinhos = (int *) malloc((linhas - 3) * sizeof(int));
+    raio = (float *) malloc((linhas - 3) * sizeof(float));
     
     rewind(arq);
     int linhas1 = 0;
@@ -261,9 +263,9 @@ void lerArquivo(char *arquivo, int *linhasArquivo, int *colunasArquivo, float **
     linhas = linhas2 -1;
     linhasArquivo = &linhas;
     rewind(file);
-    matriz = realloc(matriz, sizeof(float*) * linhas);
+    matriz = malloc(sizeof(float*) * linhas);
     for (i = 0; i < linhas; i++){
-        matriz[i] = realloc(matriz[i], sizeof(float)*(n+1));
+        matriz[i] = malloc(sizeof(float)*(n+1));
     }
     for (i = 0; i < linhas; i++){
         fgets(str, 1000, file);
@@ -290,12 +292,12 @@ void lerArquivo(char *arquivo, int *linhasArquivo, int *colunasArquivo, float **
 
 int main(){
 
-    float **treino, **teste, r;
+    float **treino, **teste, r, **distancia, **somastreino, **somasteste, **somas, **multiplicacoes, **subtracoes;
     int linhasteste, linhastreino, colunastreino, *linhasteste1, *linhastreino1, *colunastreino1, *colunasteste1, i, j, *todasColunas;
     char tipo;
     char *arquivotreino, *arquivoteste, *predicoes, *modoDecalcular;
     int *numeroDeVizinhos, *linhasconfig, *linhasArquivo,  *colunasArquivo;
-    float *raio;
+    float *raio, **matriztreino, **matrizteste;
 
     scanf(" %c", &tipo);
     if(tipo == 'M'){
@@ -305,27 +307,9 @@ int main(){
     scanf(" %i", &linhasteste); 
     scanf(" %i", &colunastreino);
 
-    todasColunas = (int *) malloc(1 * sizeof(int));
-    arquivotreino = (char *) malloc(2 * sizeof(char));
-    arquivoteste = (char *) malloc(2 * sizeof(char));
-    predicoes = (char *) malloc(2 * sizeof(char));
-    modoDecalcular = (char *) malloc(2 * sizeof(char));
-    numeroDeVizinhos = (int *) malloc(2 * sizeof(int));
-    raio = (float *) malloc(2 * sizeof(float));
-
     lerConfig(linhasconfig, todasColunas, numeroDeVizinhos, raio, modoDecalcular, arquivoteste, arquivotreino, predicoes);
-
-    float **matriztreino = malloc(sizeof(float*) * 2);
-    for (i = 0; i < 2; i++){
-        matriztreino[i] = malloc(sizeof(float)*2);
-    }
-    float **matrizteste = malloc(sizeof(float*) * 2);
-    for (i = 0; i < 2; i++){
-        matrizteste[i] = malloc(sizeof(float)*2);
-    }
-
-    lerArquivo(arquivotreino, linhastreino1, colunastreino1, matriztreino);
-    lerArquivo(arquivoteste, linhasteste1, colunasteste1, matrizteste);
+    lerArquivo("dataset/iris_treino.csv", linhastreino1, colunastreino1, matriztreino);
+    lerArquivo("dataset/iris_teste.csv", linhasteste1, colunasteste1, matrizteste);
 
     treino = (float **) malloc(sizeof(float *) * 2);
     for(i=0; i<linhastreino; i++){
@@ -336,27 +320,27 @@ int main(){
         teste[i] = (float *) malloc(sizeof(float) * 2);
     }
     
-    float **subtracoes = (float **) malloc(sizeof(float *) * linhasteste * linhastreino);
+    subtracoes = (float **) malloc(sizeof(float *) * linhasteste * linhastreino);
     for(i=0; i<(linhasteste * linhastreino); i++){
         subtracoes[i] = (float *) malloc(sizeof(float) * colunastreino);
     }
-    float **multiplicacoes = (float **) malloc(sizeof(float *) * linhasteste * linhastreino);
+    multiplicacoes = (float **) malloc(sizeof(float *) * linhasteste * linhastreino);
     for(i=0; i<(linhasteste * linhastreino); i++){
         multiplicacoes[i] = (float *) malloc(sizeof(float) * colunastreino);
     }
-    float **somas = (float **) malloc(sizeof(float *) * linhasteste * linhastreino);
+    somas = (float **) malloc(sizeof(float *) * linhasteste * linhastreino);
     for(i=0; i<(linhasteste * linhastreino); i++){
         somas[i] = (float *) malloc(sizeof(float) * 2);
     }
-    float **somasteste = (float **) malloc(sizeof(float *) * linhasteste);
+    somasteste = (float **) malloc(sizeof(float *) * linhasteste);
     for(i=0; i<linhasteste; i++){
         somasteste[i] = (float *) malloc(sizeof(float) * 2);
     }
-    float **somastreino = (float **) malloc(sizeof(float *) * linhastreino);
+    somastreino = (float **) malloc(sizeof(float *) * linhastreino);
     for(i=0; i<linhastreino; i++){
         somastreino[i] = (float *) malloc(sizeof(float) * 2);
     }
-    float **distancia = (float **) malloc(sizeof(float *) * linhasteste * linhastreino);
+    distancia = (float **) malloc(sizeof(float *) * linhasteste * linhastreino);
     for(i=0; i<(linhasteste * linhastreino); i++){
         distancia[i] = (float *) malloc(sizeof(float) * 2);
     }

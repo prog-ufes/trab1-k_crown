@@ -1,0 +1,26 @@
+Distancia de Mikowski 
+    float soma = 0;
+    for(i = 0; i < linhas2; i++){
+        for(j = 0; j < linhas; j++){
+            for (int k = 0; k < n; k++){
+                soma = pow(fabs(vetor2[i][k] - vetor[j][k]), r) + soma;
+            }
+            vetor3[i][j] = pow(soma, 1/r);
+            soma = 0;
+        }
+    }
+    print vetor de distancias mikowskianas de cada ponto j em realção a estrela i
+    for (i = 0; i < linhas2; i++){
+        printf("Vetor %d:\n", i+1);
+        for (j = 0; j < linhas; j++){
+            printf("%.2f ---- %.2f\n", vetor3[i][j], vetor4[i][j]);
+        }
+    }
+    sorted(Mikowskiana)
+    for (i = 0; i < linhas2; i++){
+        printf("Vetor %d:\n", i+1);
+        bubblesort(vetor3[i], linhas, vetor4[i]);
+        for (j = 0; j < linhas; j++){
+            printf("%.2f ---- %.2f\n", vetor3[i][j], vetor4[i][j]);
+        }
+    }

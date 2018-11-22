@@ -298,7 +298,7 @@ int main(){
     //     }
     // }
     // Distancia de Chebyshev
-    /*float max = 0;
+    float max = 0;
     for(i = 0; i < linhas2; i++){
         for(j = 0; j < linhas; j++){
             for (int k = 0; k < n; k++){
@@ -311,7 +311,7 @@ int main(){
             }
             vetor3[i][j] = max;
         }
-    }*/
+    }
     //print vetor de distancias chebyshevianas de cada ponto j em realção a estrela i
     // for (i = 0; i < linhas2; i++){
     //     printf("Vetor %d:\n", i+1);
@@ -320,13 +320,13 @@ int main(){
     //     }
     // }
     //sorted Chebyshev
-    /*for (i = 0; i < linhas2; i++){
+    for (i = 0; i < linhas2; i++){
         printf("Vetor %d:\n", i+1);
         bubblesort(vetor3[i], linhas, vetor4[i]);
         for (j = 0; j < linhas; j++){
             printf("%.2f ---- %.2f\n", vetor3[i][j], vetor4[i][j]);
         }
-    }*/
+    }
     // k primeiros
     int k = 8, nrotulos, aux;
     nrotulos = maior(vetor4[0], linhas);

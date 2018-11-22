@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<math.h>
 #include<string.h>
+#include"distancias.h"
 
 void subtracao(float **Amostra, float **Vizinhos, float **subtracoes, int linhasamostras, int linhasVizinhos, int colunasVizinhos){
     int i=0, j=0, l=0, m=0;
@@ -179,44 +180,41 @@ void matrizrotulos(int linhasTeste, int linhasTreino, float **kDistanciasMenores
     }
 }
 
-
 void maioresmat(int linhasTeste, int linhasTreino, int n, float **subtracoes, float **distancias){
-    int i, j;
+    int i. j;
     for(i=0; i<(linhasTeste * linhasTreino); i++){
-        distancias[i][0] = subtracoes[i][n-1];
-        distancias[i][1] = subtracoes[i][n];
+        distancias[i][0] = subtracoes[i][n-2];
+        distancias[i][1] = subtracoes[i][n-1];
     }
 }
 
-int main(){
-
-    int linhasTeste, linhasTreino, n, i, j;
-    float **rotulos;
-
-    scanf(" %i", &linhasTeste);
-    scanf(" %i", &linhasTreino);
-    scanf(" %i", &n);
-
-    float **distancias = (float **) malloc(linhasTeste * linhasTreino * sizeof(float *));
-    for(i=0; i<(linhasTeste * linhasTreino); i++){
-        distancias[i] = (float *) malloc(2 * sizeof(float));
-    }
-    float **subtracoes = (float **) malloc(sizeof(float *) * linhasTeste * linhasTreino);
-    for(i=0; i<(linhasTeste * linhasTreino); i++){
-        subtracoes[i] = (float *) malloc(sizeof(float) * (n+1));
-    }
-    for(i=0; i<(linhasTeste * linhasTreino); i++){
-        for(j=0; j<(n+1); j++){
-            scanf("%f", &subtracoes[i][j]);
-        }
-    }
-    
-    matrizrotulos(linhasTeste, linhasTreino, distancias, rotulos);
+void classificacao(float **rotulos, float *classificado, int linhasTeste, int linhasTreino){
+    int i, j, k, n=0, **numeroRotulos;
+    numeroRotulos = (float **) malloc(linhasTeste * sizeof(float *));
     for(i=0; i<linhasTeste; i++){
-        for(j=0; j<linhasTreino; j++){
-            printf("%.2f ", rotulos[i][j]);
-        }
-        printf("\n");
+        numeroRotulos[i] = (float *) malloc(linhasTreino * sizeof(float));
     }
-    return 0;
+    classificado = (float *) malloc(linhasTeste * sizeof(float));
+    for(i=0; i<linhasTeste; i++){
+        for(k=0; k<linhasTreino; k++){
+            for(j=0; j<linhasTreino; j++){
+                if(rotulos[i][k] == rotulos[i][j]){
+                    n++;
+                }
+                numeroRotulos[i][k] = n;
+                n=0;
+            }    
+        }
+    }
+    for(i=0; i<linhasTeste; i++){
+        for(k=0; k<linhasTreino; k++){
+            for(j=0; j<linhasTreino; j++){
+                if(numeroRotulos[i][k] <= numeroRotulos[i][j]){
+                    k++;
+                }
+            }    
+        }
+        classificado[i] = numeroRotulos[i][k];
+    }
+
 }

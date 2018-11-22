@@ -134,160 +134,58 @@ void bubblesort(float **vetor, int n, int w){
     }
 }
 
-void lerConfig(int *linhasconfig, int *todasColunas, int *numeroDeVizinhos, float *raio, char *modoDecalcular, char *arquivoteste, char *arquivotreino, char *predicoes){
-    char c, url[]="config.txt";
-    int colunas=0, i=0, j=0, linhas=0;
-    int y;
-
-    todasColunas = (int *) malloc(1 * sizeof(int));
-
-    FILE *arq;
-    arq = fopen(url, "r");
-    if(arq == NULL){
-        printf("Erro");
-        exit(1);
-    }
-    //Conta o número de linhas e colunas
-    while(fread (&c, sizeof(char), 1, arq)) {
-        if(c != '\n') {
-            colunas++;
-        }else{
-            y = linhas + 1;
-            todasColunas = (int *) realloc(todasColunas, y * sizeof(int));
-            if(linhas<3){
-                todasColunas[linhas] = colunas + 1;
-                linhas++;
-                colunas = 0;
-            }else{
-                todasColunas[linhas] = colunas ;
-                linhas++;
-                colunas = 0;
-            }
-        }
-    }
-
-    linhasconfig = &linhas;
-
-    arquivotreino = (char *) malloc(todasColunas[0] * sizeof(char));
-    arquivoteste = (char *) malloc(todasColunas[1] * sizeof(char));
-    predicoes = (char *) malloc(todasColunas[2] * sizeof(char));
-    modoDecalcular = (char *) malloc((linhas - 2) * sizeof(char));
-    numeroDeVizinhos = (int *) malloc((linhas - 3) * sizeof(int));
-    raio = (float *) malloc((linhas - 3) * sizeof(float));
-    
-    rewind(arq);
-    int linhas1 = 0;
-    //Aloca os vetores de arquivos e de entradas
-    while(linhas1<linhas){
-        while(fread (&c, sizeof(char), 1, arq) && linhas1 <3){
-            if(c != '\n'){
-                switch(linhas1){
-                    case 0: arquivotreino[i] = c;
-                            i++;
-                            break;
-                    case 1: arquivoteste[i] = c;                            
-                            i++;
-                            break;
-                    case 2: predicoes[i] = c;                           
-                            i++;
-                            break;
+void bubblesortmat(float **matriz, int n, int linhasteste, int linhastreino){
+    int i, j, k;
+    for(k=0; k<(linhastreino * linhasteste); k++){
+        for (i = 0; i< n  - 1; i++){
+            for (j = 0; j < n - i -1; j++){
+                if (matriz[k][j] > matriz[k][j+1]){
+                    troca(&matriz[k][j], &matriz[k][j+1]);
                 }
-            }else{
-                linhas1++;
-                i=0;
             }
         }
-        if(linhas1 == 3){
-            numeroDeVizinhos[i] = c -'0';
-            fscanf(arq, " , %c", &modoDecalcular[i]);
-            if(modoDecalcular[i] == 'M'){
-            fscanf(arq, ", %f", &raio[i]);
-            }else{
-                raio[i]=0;
-            }
-            i++;
-            linhas1++;
-        }else{
-            fscanf(arq, "%i, %c", &numeroDeVizinhos[i], &modoDecalcular[i]);
-            if(modoDecalcular[i] == 'M'){
-                fscanf(arq, ", %f", &raio[i]);
-            }else{
-                raio[i]=0;
-            }
-            i++;
-            linhas1++;
-        }
     }
-        
-    for(i=0; i<strlen(arquivotreino); i++){
-        printf("%c", arquivotreino[i]);
-    }
-    printf("\n");
-    for(i=0; i<strlen(arquivoteste); i++){
-        printf("%c", arquivoteste[i]);
-    }
-    printf("\n");
-    for(i=0; i<strlen(predicoes); i++){
-        printf("%c", predicoes[i]);
-    }
-    printf("\n");
-    for(i=0; i<(linhas-3); i++){
-        printf("%i, %c, %.2f\n", numeroDeVizinhos[i], modoDecalcular[i], raio[i]);
-    }
-    putchar('\n');
-    fclose(arq);
 }
 
-void lerArquivo(char *arquivo, int *linhasArquivo, int *colunasArquivo, float **matriz){
-    FILE *file = fopen(arquivo, "r");
-    char *str = malloc(sizeof(char)*1000);
-    if (file == NULL) {
-    printf ("Erro na abertura de arquivo! Programa terminado...");
-    exit (1);
+void kmenores(int k, float **distancias, float **kDistanciasMenores,int linhasTeste, int linhasTreino){
+    int i, j, l=0;
+
+    kDistanciasMenores = (float **) malloc(k * linhasTeste * sizeof(float*));
+    for(i=0; i<(k * linhasTeste); i++){
+        kDistanciasMenores[i] = (float *) malloc(2 * sizeof(float));
     }
-    int n = 0, linhas2 = 0, quebra = 0, j = 0, i;
-    while(!feof(file)){
-        //fscanf(file, "%[^\n]", str);
-        fgets(str, 1000, file);
-        if( quebra == 0){
-            for(i = 0; i < strlen(str); i++){
-                if (str[i] == ','){
-                    n++;
-                }
-            }
-            quebra++;
+
+    for(i=0; i<linhasTeste ; i++){
+        for(j=0; (j + i*linhasTreino)<(k + i*linhasTreino); j++){
+            kDistanciasMenores[j][0] = distancias[l][0];
+            kDistanciasMenores[j][1] = distancias[l][1];
+            l++;
         }
-        linhas2++;
     }
-    int linhas;
-    linhas = linhas2 -1;
-    linhasArquivo = &linhas;
-    rewind(file);
-    matriz = malloc(sizeof(float*) * linhas);
-    for (i = 0; i < linhas; i++){
-        matriz[i] = malloc(sizeof(float)*(n+1));
+}
+
+void matrizrotulos(int linhasTeste, int linhasTreino, float **kDistanciasMenores, float **rotulos){
+    int i=0, j, k=0;
+    rotulos = (float **) malloc(linhasTeste * sizeof(float *));
+    for(i=0; i<linhasTeste; i++){
+        rotulos[i] = (float *) malloc(linhasTreino * sizeof(float));
     }
-    for (i = 0; i < linhas; i++){
-        fgets(str, 1000, file);
-        char *strnew = NULL;
-        strnew = strtok(str, ",\n");
-        while(strnew != NULL){
-            matriz[i][j] = atof(strnew);
-            strnew = strtok(NULL, ",\n");
-            j++;
+    while(i<(linhasTeste * linhasTreino)){
+        for(j=0; j<linhasTreino; j++){
+            rotulos[k][j] = kDistanciasMenores[i][1];
+            i++;
         }
-        j = 0;
+        k++;
     }
-    for(i = 0; i < linhas; i++){
-        for (j = 0; j < n+1; j++)
-            printf("%.2f ", matriz[i][j]);
-        putchar('\n');
+}
+
+
+void maioresmat(int linhasTeste, int linhasTreino, int n, float **subtracoes, float **distancias){
+    int i. j;
+    for(i=0; i<(linhasTeste * linhasTreino); i++){
+        distancias[i][0] = subtracoes[i][n-2];
+        distancias[i][1] = subtracoes[i][n-1];
     }
-    putchar('\n');
-    
-    fclose(file);
-    n = n +1;
-    colunasArquivo = &n;
 }
 
 int main(){
@@ -295,9 +193,6 @@ int main(){
     float **treino, **teste, r, **distancia, **somastreino, **somasteste, **somas, **multiplicacoes, **subtracoes;
     int linhasteste, linhastreino, colunastreino, *linhasteste1, *linhastreino1, *colunastreino1, *colunasteste1, i, j, *todasColunas;
     char tipo;
-    char *arquivotreino, *arquivoteste, *predicoes, *modoDecalcular;
-    int *numeroDeVizinhos, *linhasconfig, *linhasArquivo,  *colunasArquivo;
-    float *raio, **matriztreino, **matrizteste;
 
     scanf(" %c", &tipo);
     if(tipo == 'M'){
@@ -307,17 +202,23 @@ int main(){
     scanf(" %i", &linhasteste); 
     scanf(" %i", &colunastreino);
 
-    lerConfig(linhasconfig, todasColunas, numeroDeVizinhos, raio, modoDecalcular, arquivoteste, arquivotreino, predicoes);
-    lerArquivo("dataset/iris_treino.csv", linhastreino1, colunastreino1, matriztreino);
-    lerArquivo("dataset/iris_teste.csv", linhasteste1, colunasteste1, matrizteste);
-
     treino = (float **) malloc(sizeof(float *) * 2);
     for(i=0; i<linhastreino; i++){
         treino[i] = (float *) malloc(sizeof(float) * 2);
     }
+    for(i=0; i<linhastreino; i++){
+        for(j=0; j<colunastreino; j++){
+            scanf("%f ", &treino[i][j]);
+        }
+    }
     teste = (float **) malloc(sizeof(float *) * 2);
     for(i=0; i<linhasteste; i++){
         teste[i] = (float *) malloc(sizeof(float) * 2);
+    }
+    for(i=0; i<linhasteste; i++){
+        for(j=0; j<colunastreino; j++){
+            scanf("%f ", &teste[i][j]);
+        }
     }
     
     subtracoes = (float **) malloc(sizeof(float *) * linhasteste * linhastreino);
@@ -354,6 +255,8 @@ int main(){
                 for(i=0; i<linhasteste; i++){
                     bubblesort(distancia, (i+1)*linhastreino, i*linhastreino);
                 }
+                kmenores(numeroDeVizinhos[k], distancia, kDistanciasMenores, linhasTeste, linhasTreino);
+                matrizrotulos(linhasTeste, linhasTreino, kDistanciasMenores, rotulos);
                 for(i=0; i<(linhasteste * linhastreino); i++){
                     for(j=0; j<2; j++){
                         printf("%.2f ", distancia[i][j]);
@@ -370,6 +273,8 @@ int main(){
                 for(i=0; i<linhasteste; i++){
                     bubblesort(distancia, (i+1)*linhastreino, i*linhastreino);
                 }
+                kmenores(numeroDeVizinhos[k], distancia, kDistanciasMenores, linhasTeste, linhasTreino);
+                matrizrotulos(linhasTeste, linhasTreino, kDistanciasMenores, rotulos);
                 for(i=0; i<(linhasteste * linhastreino); i++){
                     for(j=0; j<2; j++){
                         printf("%.2f ", distancia[i][j]);
@@ -379,12 +284,14 @@ int main(){
                 break;
         //distância de Chebyshev
         case 'C':
-                somamat(teste, somasteste, linhasteste, colunastreino);
-                somamat(treino, somastreino, linhastreino, colunastreino);
-                subtracaovet(somasteste, somastreino, subtracoes, linhasteste, linhastreino);
+                subtracaomodulo(teste, treino, subtracoes, linhasteste, linhastreino, colunastreino);
+                bubblesortmat(subtracoes, colunastreino, linhasteste, linhastreino);
+                maioresmat(linhasTeste, linhasTreino, colunastreino, subtracoes,distancias);
                 for(i=0; i<linhasteste; i++){
                     bubblesort(distancia, (i+1)*linhastreino, i*linhastreino);
                 }
+                kmenores(numeroDeVizinhos[k], distancia, kDistanciasMenores, linhasTeste, linhasTreino);
+                matrizrotulos(linhasTeste, linhasTreino, kDistanciasMenores, rotulos);
                 for(i=0; i<(linhasteste * linhastreino); i++){
                     for(j=0; j<2; j++){
                         printf("%.2f ", subtracoes[i][j]);
@@ -423,14 +330,6 @@ int main(){
         free(distancia[i]);
     }
     free(distancia);
-
-    free(raio);
-    free(todasColunas);
-    free(modoDecalcular);
-    free(numeroDeVizinhos);
-    free(arquivoteste);
-    free(arquivotreino);
-    free(predicoes);
 
     return 0;
 }

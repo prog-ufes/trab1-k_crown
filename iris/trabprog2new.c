@@ -134,6 +134,90 @@ void bubblesort(float **vetor, int n, int w){
     }
 }
 
+void bubblesortmat(float **matriz, int n, int linhasteste, int linhastreino){
+    int i, j, k;
+    for(k=0; k<(linhastreino * linhasteste); k++){
+        for (i = 0; i< n  - 1; i++){
+            for (j = 0; j < n - i -1; j++){
+                if (matriz[k][j] > matriz[k][j+1]){
+                    troca(&matriz[k][j], &matriz[k][j+1]);
+                }
+            }
+        }
+    }
+}
+
+void kmenores(int k, float **distancias, float **kDistanciasMenores,int linhasTeste, int linhasTreino){
+    int i, j, l=0;
+
+    kDistanciasMenores = (float **) malloc(k * linhasTeste * sizeof(float*));
+    for(i=0; i<(k * linhasTeste); i++){
+        kDistanciasMenores[i] = (float *) malloc(2 * sizeof(float));
+    }
+
+    for(i=0; i<linhasTeste ; i++){
+        for(j=0; (j + i*linhasTreino)<(k + i*linhasTreino); j++){
+            kDistanciasMenores[j][0] = distancias[l][0];
+            kDistanciasMenores[j][1] = distancias[l][1];
+            l++;
+        }
+    }
+}
+
+void matrizrotulos(int linhasTeste, int linhasTreino, float **kDistanciasMenores, float **rotulos){
+    int i=0, j, k=0;
+    rotulos = (float **) malloc(linhasTeste * sizeof(float *));
+    for(i=0; i<linhasTeste; i++){
+        rotulos[i] = (float *) malloc(linhasTreino * sizeof(float));
+    }
+    while(i<(linhasTeste * linhasTreino)){
+        for(j=0; j<linhasTreino; j++){
+            rotulos[k][j] = kDistanciasMenores[i][1];
+            i++;
+        }
+        k++;
+    }
+}
+
+void maioresmat(int linhasTeste, int linhasTreino, int n, float **subtracoes, float **distancias){
+    int i. j;
+    for(i=0; i<(linhasTeste * linhasTreino); i++){
+        distancias[i][0] = subtracoes[i][n-2];
+        distancias[i][1] = subtracoes[i][n-1];
+    }
+}
+
+void classificacao(float **rotulos, float *classificado, int linhasTeste, int linhasTreino){
+    int i, j, k, n=0, **numeroRotulos;
+    numeroRotulos = (float **) malloc(linhasTeste * sizeof(float *));
+    for(i=0; i<linhasTeste; i++){
+        numeroRotulos[i] = (float *) malloc(linhasTreino * sizeof(float));
+    }
+    classificado = (float *) malloc(linhasTeste * sizeof(float));
+    for(i=0; i<linhasTeste; i++){
+        for(k=0; k<linhasTreino; k++){
+            for(j=0; j<linhasTreino; j++){
+                if(rotulos[i][k] == rotulos[i][j]){
+                    n++;
+                }
+                numeroRotulos[i][k] = n;
+                n=0;
+            }    
+        }
+    }
+    for(i=0; i<linhasTeste; i++){
+        for(k=0; k<linhasTreino; k++){
+            for(j=0; j<linhasTreino; j++){
+                if(numeroRotulos[i][k] <= numeroRotulos[i][j]){
+                    k++;
+                }
+            }    
+        }
+        classificado[i] = numeroRotulos[i][k];
+    }
+
+}
+
 int main(){
 
     char c, url[]="config.txt";
@@ -170,7 +254,7 @@ int main(){
 
     char *arquivotreino, *arquivoteste, *predicoes, *modoDecalcular;
     int *numeroDeVizinhos;
-    float *raio;
+    float **kDistanciasMenores, *raio, **distancia, **somastreino, **somasteste, **somas, **multiplicacoes, **subtracoes, **rotulos;
 
     arquivotreino = (char *) malloc(todasColunas[0] * sizeof(char));
     arquivoteste = (char *) malloc(todasColunas[1] * sizeof(char));
@@ -339,6 +423,91 @@ int main(){
     }
     
     fclose(fileteste);
+
+    subtracoes = (float **) malloc(sizeof(float *) * linhasTeste * linhasTreino);
+    for(i=0; i<(linhasTeste * linhasTreino); i++){
+        subtracoes[i] = (float *) malloc(sizeof(float) * (n+1));
+    }
+    multiplicacoes = (float **) malloc(sizeof(float *) * linhasTeste * linhasTreino);
+    for(i=0; i<(linhasTeste * linhasTreino); i++){
+        multiplicacoes[i] = (float *) malloc(sizeof(float) * (n+1));
+    }
+    somas = (float **) malloc(sizeof(float *) * linhasTeste * linhasTreino);
+    for(i=0; i<(linhasTeste * linhasTreino); i++){
+        somas[i] = (float *) malloc(sizeof(float) * 2);
+    }
+    somasteste = (float **) malloc(sizeof(float *) * linhasTeste);
+    for(i=0; i<linhasTeste; i++){
+        somasteste[i] = (float *) malloc(sizeof(float) * 2);
+    }
+    somastreino = (float **) malloc(sizeof(float *) * linhasTreino);
+    for(i=0; i<linhasTreino; i++){
+        somastreino[i] = (float *) malloc(sizeof(float) * 2);
+    }
+    distancia = (float **) malloc(sizeof(float *) * linhasTeste * linhasTreino);
+    for(i=0; i<(linhasTeste * linhasTreino); i++){
+        distancia[i] = (float *) malloc(sizeof(float) * 2);
+    }
+
+    int k;
+    for(k=0; k<(linhas - 3); k++){
+        switch(modoDecalcular[i]){
+            //distancia euclidiana
+            case 'E':
+                    subtracao(matrizTeste, matrizTreino, subtracoes, linhasTeste, linhasTreino, (n+1));
+                    multiplicacao(subtracoes, multiplicacoes, linhasTeste, linhasTreino, (n+1), 2);
+                    soma(multiplicacoes, somas, linhasTeste, linhasTreino, (n+1));
+                    multiplicacaovet(somas, distancia, linhasTeste, linhasTreino, 0.5);
+                    for(i=0; i<linhasTeste; i++){
+                        bubblesort(distancia, (i+1)*linhasTreino, i*linhasTreino);
+                    }
+                    kmenores(numeroDeVizinhos[k], distancia, kDistanciasMenores, linhasTeste, linhasTreino);
+                    matrizrotulos(linhasTeste, linhasTreino, kDistanciasMenores, rotulos);
+                    for(i=0; i<(numeroDeVizinhos[k] * linhasTeste); i++){
+                        for(j=0; j<2; j++){
+                            printf("%.2f ", kDistanciasMenores[i][j]);
+                        }
+                        printf("\n");
+                    }
+
+                    break;
+            //distância de Minkowsky
+            case 'M':
+                    subtracaomodulo(matrizTeste, matrizTreino, subtracoes, linhasTeste, linhasTreino, (n+1));
+                    multiplicacao(subtracoes, multiplicacoes, linhasTeste, linhasTreino, (n+1), raio[k]);
+                    soma(multiplicacoes, somas, linhasTeste, linhasTreino, (n+1));
+                    multiplicacaovet(somas, distancia, linhasTeste, linhasTreino, (1/raio[k]));
+                    for(i=0; i<linhasTeste; i++){
+                        bubblesort(distancia, (i+1)*linhasTreino, i*linhasTreino);
+                    }
+                    kmenores(numeroDeVizinhos[k], distancia, kDistanciasMenores, linhasTeste, linhasTreino);
+                    matrizrotulos(linhasTeste, linhasTreino, kDistanciasMenores, rotulos);
+                    for(i=0; i<(numeroDeVizinhos[k] * linhasTeste); i++){
+                        for(j=0; j<2; j++){
+                            printf("%.2f ", kDistanciasMenores[i][j]);
+                        }
+                        printf("\n");
+                    }
+                    break;
+            //distância de Chebyshev
+            case 'C':
+                    subtracaomodulo(matrizTeste, matrizTreino, subtracoes, linhasTeste, linhasTreino, (n+1));
+                    bubblesortmat(subtracoes, (n+1), linhasTeste, linhasTreino);
+                    maioresmat(linhasTeste, linhasTreino, colunastreino, subtracoes,distancia);
+                    for(i=0; i<linhasTeste; i++){
+                        bubblesort(distancia, (i+1)*linhasTreino, i*linhasTreino);
+                    }
+                    kmenores(numeroDeVizinhos[k], distancia, kDistanciasMenores, linhasTeste, linhasTreino);
+                    matrizrotulos(linhasTeste, linhasTreino, kDistanciasMenores, rotulos);
+                    for(i=0; i<(linhasTeste * linhasTreino); i++){
+                        for(j=0; j<(n+1); j++){
+                            printf("%.2f ", subtracoes[i][j]);
+                        }
+                        printf("\n");
+                    }
+                    break;
+        }
+    }
 
     free(str);
     for(i = 0; i < linhasTreino; i++){

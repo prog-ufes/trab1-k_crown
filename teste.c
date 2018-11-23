@@ -47,16 +47,48 @@ void bubblesort(float vetor[], int n, float rotulo[]){
                 troca(&vetor[j], &vetor[j+1]);
                 troca(&rotulo[j], &rotulo[j+1]);
                 }
-            if (vetor[j] == vetor[j+1] && rotulo[j] > rotulo[j+1]){
-                troca(&rotulo[j], &rotulo[j+1]);
-            }
+            // if (vetor[j] == vetor[j+1] && rotulo[j] > rotulo[j+1]){
+            //     troca(&rotulo[j], &rotulo[j+1]);
+            // }
         }
     }
 }
 
 int main(){
-    FILE *file = fopen("teste1.txt", "r"), *file2 = fopen("teste2.txt", "r");
-    float r = 0.5;
+    FILE *config = fopen("config.txt", "r");
+    char *pathteste = malloc(sizeof(char)*500), *pathtreino = malloc(sizeof(char)*500),
+    *pathsaida = malloc(sizeof(char)*50), *pathaux = malloc(sizeof(char)*50);
+    if (config == NULL) {
+        printf ("Erro na abertura de arquivo\n");
+        exit (1);
+    }
+    fscanf(config, "%s", pathteste);
+    fscanf(config, "%s", pathtreino);
+    FILE *file = fopen(pathtreino, "r"), *file2 = fopen(pathteste, "r");
+    fscanf(config, "%s", pathsaida);
+    strcpy(pathaux, pathsaida);
+    printf("%s\n", pathaux);
+    int loop = 0;
+while(!feof(config)){
+    int kcon;
+    float r;
+    char *conv = malloc(sizeof(char)*30), numero[20], tipod;
+    fscanf(config, "%d, %c,", &kcon, &tipod);
+    if (kcon == -1){
+        break;
+    }
+    printf("%d - %c\n", kcon, tipod);
+    strcpy(pathsaida,pathaux);
+    strcpy(conv,"predicao_");
+    sprintf(numero, "%d", loop + 1);
+    strcat(conv, numero);
+    strcat(conv, ".txt");
+    strcat(pathsaida, conv);
+    free(conv);
+    FILE *saida = fopen(pathsaida, "w");
+    if (saida == NULL) {
+    exit (1);
+    }
     char *str = malloc(sizeof(char)*1000), *str2 = malloc(sizeof(char)*1000);
     if (file == NULL) {
     printf ("Erro na abertura de arquivo! Programa terminado...");
@@ -65,8 +97,8 @@ int main(){
     int n = 0, linhas = 0, linhas2 = 0, i, quebra = 0, j = 0;
     // Calculo do numero de linhas
     while(!feof(file)){
-        //fscanf(file, "%[^\n]", str);
-        fgets(str, 1000, file);
+        fscanf(file, "%s", str);
+        // fgets(str, 1000, file);
         if( quebra == 0){
             for(i = 0; i < strlen(str); i++){
                 if (str[i] == ','){
@@ -78,9 +110,11 @@ int main(){
         linhas++;
     }
     while(!feof(file2)){
-        fgets(str2, 1000, file2);
+        fscanf(file2,"%s", str2);
         linhas2++;
     }
+    linhas2--;
+    linhas--;
     //retomar o arquivo para o inicio
     rewind(file2);
     rewind(file);
@@ -92,7 +126,7 @@ int main(){
     //alocando memoria para a matriz de floats do arq 2
     float **vetor2 = malloc(sizeof(float*) * linhas2);
     for (i = 0; i < linhas2; i++){
-        vetor2[i] = malloc(sizeof(float)*n);
+        vetor2[i] = malloc(sizeof(float)*(n + 1));
     }
     //alocando memoria para o resultado da distancia
     float **vetor3 = malloc(sizeof(float*) * linhas2);
@@ -106,8 +140,8 @@ int main(){
     }
     //Quebrando a string em varias para converter o valores 1
     for (i = 0; i < linhas; i++){
-        //fscanf(file, "%[^\n]", str);
-        fgets(str, 1000, file);
+        fscanf(file, "%s", str);
+        // fgets(str, 1000, file);
         char *strnew = NULL;
         strnew = strtok(str, ",\n");
         while(strnew != NULL){
@@ -119,8 +153,8 @@ int main(){
     }
     //Quebrando a string em varias para converter o valores 2
     for (i = 0; i < linhas2; i++){
-        //fscanf(file, "%[^\n]", str);
-        fgets(str2, 1000, file2);
+        fscanf(file2, "%s", str2);
+        // fgets(str2, 1000, file2);
         char *strnew2 = NULL;
         strnew2 = strtok(str2, ",\n");
         while(strnew2 != NULL){
@@ -138,18 +172,19 @@ int main(){
             // printf("%.2f\n", vetor4[i][j]);
         }
     }
-
+    printf("%d, %d\n", linhas, linhas2);
     // Distancia Euclidiana
-    // float soma = 0;
-    // for(i = 0; i < linhas2; i++){
-    //     for(j = 0; j < linhas; j++){
-    //         for (int k = 0; k < n; k++){
-    //             soma = pow(vetor2[i][k] - vetor[j][k], 2) + soma;
-    //         }
-    //         vetor3[i][j] = sqrt(soma);
-    //         soma = 0;
-    //     }
-    // }
+    if (tipod == 'E'){
+        float soma = 0;
+        for(i = 0; i < linhas2; i++){
+            for(j = 0; j < linhas; j++){
+                for (int k = 0; k < n; k++){
+                    soma = pow(vetor2[i][k] - vetor[j][k], 2) + soma;
+                }
+                vetor3[i][j] = sqrt(soma);
+                soma = 0;
+            }
+        }
     // print vetor de distancias euclidianas de cada ponto j em realção a estrela i
     // for (i = 0; i < linhas2; i++){
     //     printf("Vetor %d:\n", i+1);
@@ -158,24 +193,27 @@ int main(){
     //     }
     // }
     //sorted(Euclidiana)
-    // for (i = 0; i < linhas2; i++){
-    //     // printf("Vetor %d:\n", i+1);
-    //     bubblesort(vetor3[i], linhas, vetor4[i]);
-    //     for (j = 0; j < linhas; j++){
-    //         // printf("%.2f ---- %.2f\n", vetor3[i][j], vetor4[i][j]);
-    //     }
-    // }
+        for (i = 0; i < linhas2; i++){
+            // printf("Vetor %d:\n", i+1);
+            bubblesort(vetor3[i], linhas, vetor4[i]);
+            for (j = 0; j < linhas; j++){
+                // printf("%.2f ---- %.2f\n", vetor3[i][j], vetor4[i][j]);
+            }
+        }
+    }
     //Distancia de Mikowski 
-    // float soma = 0;
-    // for(i = 0; i < linhas2; i++){
-    //     for(j = 0; j < linhas; j++){
-    //         for (int k = 0; k < n; k++){
-    //             soma = pow(fabs(vetor2[i][k] - vetor[j][k]), r) + soma;
-    //         }
-    //         vetor3[i][j] = pow(soma, 1/r);
-    //         soma = 0;
-    //     }
-    // }
+    if (tipod == 'M'){
+        fscanf(config, "%f", &r);
+        float soma = 0;
+        for(i = 0; i < linhas2; i++){
+            for(j = 0; j < linhas; j++){
+                for (int k = 0; k < n; k++){
+                    soma = pow(fabs(vetor2[i][k] - vetor[j][k]), r) + soma;
+                }
+                vetor3[i][j] = pow(soma, 1/r);
+                soma = 0;
+            }
+        }
     // print vetor de distancias mikowskianas de cada ponto j em realção a estrela i
     // for (i = 0; i < linhas2; i++){
     //     printf("Vetor %d:\n", i+1);
@@ -184,28 +222,30 @@ int main(){
     //     }
     // }
     //sorted(Mikowskiana)
-    // for (i = 0; i < linhas2; i++){
-    //     printf("Vetor %d:\n", i+1);
-    //     bubblesort(vetor3[i], linhas, vetor4[i]);
-    //     for (j = 0; j < linhas; j++){
-    //         printf("%.2f ---- %.2f\n", vetor3[i][j], vetor4[i][j]);
-    //     }
-    // }
-    // Distancia de Chebyshev
-    float max = 0;
-    for(i = 0; i < linhas2; i++){
-        for(j = 0; j < linhas; j++){
-            for (int k = 0; k < n; k++){
-                if (k == 0){
-                max = fabs(vetor2[i][k] - vetor[j][k]);
-                }
-                if (fabs(vetor2[i][k] - vetor[j][k]) > max){
-                    max = fabs(vetor2[i][k] - vetor[j][k]);
-                }
+        for (i = 0; i < linhas2; i++){
+            // printf("Vetor %d:\n", i+1);
+            bubblesort(vetor3[i], linhas, vetor4[i]);
+            for (j = 0; j < linhas; j++){
+                // printf("%.2f ---- %.2f\n", vetor3[i][j], vetor4[i][j]);
             }
-            vetor3[i][j] = max;
         }
     }
+    // Distancia de Chebyshev
+    if (tipod == 'C'){
+        float max;
+        for(i = 0; i < linhas2; i++){
+            for(j = 0; j < linhas; j++){
+                for (int k = 0; k < n; k++){
+                    if (k == 0){
+                    max = fabs(vetor2[i][k] - vetor[j][k]);
+                    }
+                    if (fabs(vetor2[i][k] - vetor[j][k]) > max){
+                        max = fabs(vetor2[i][k] - vetor[j][k]);
+                    }
+                }
+                vetor3[i][j] = max;
+            }
+        }
     //print vetor de distancias chebyshevianas de cada ponto j em realção a estrela i
     // for (i = 0; i < linhas2; i++){
     //     printf("Vetor %d:\n", i+1);
@@ -214,15 +254,17 @@ int main(){
     //     }
     // }
     //sorted Chebyshev
-    for (i = 0; i < linhas2; i++){
-        printf("Vetor %d:\n", i+1);
-        bubblesort(vetor3[i], linhas, vetor4[i]);
-        for (j = 0; j < linhas; j++){
-            printf("%.2f ---- %.2f\n", vetor3[i][j], vetor4[i][j]);
+        for (i = 0; i < linhas2; i++){
+            // printf("Vetor %d:\n", i+1);
+            bubblesort(vetor3[i], linhas, vetor4[i]);
+            if (i == 1|| i == 16)
+            for (j = 0; j < linhas; j++){
+                // printf("%.2f ---- %.2f\n", vetor3[i][j], vetor4[i][j]-1);
+            }
         }
     }
     // k primeiros
-    int k = 8, nrotulos, aux;
+    int nrotulos, aux;
     nrotulos = maior(vetor4[0], linhas);
     float **vetoraux = malloc(sizeof(float*)*linhas2), *rotulos = malloc(sizeof(float)*linhas2);
     for(i = 0; i < linhas2; i++){
@@ -230,22 +272,29 @@ int main(){
     }
 
     for (i = 0; i < linhas2; i++){
-        for (j = 0; j < k; j++){
+        for (j = 0; j < kcon; j++){
             aux = vetor4[i][j] - 1;
             vetoraux[i][aux]++;
         }
         rotulos[i] = maiorindex(vetoraux[i], nrotulos);
     }
-    for (i = 0; i < linhas2; i++){
-        printf("%.2f\n", rotulos[i]);
-    }
+    // for (i = 0; i < linhas2; i++){
+    //     printf("%.2f\n", rotulos[i]);
+    // }
     //Comparando rotulos descobertos com rotulos testes
     float correto = 0;
     for (i = 0; i < linhas2; i++){
+        // printf("%.2f -- %.2f\n", rotulos[i], vetor2[i][n]-1);
         if (( rotulos[i] + 1) == vetor2[i][n])
             correto++;
     }
-    printf("====%d==== -> %.2f\n", (int) correto, correto*100/linhas2);
+    // for (i = 0; i < nrotulos; i++){
+    //     for (j = 0; j < nrotulos; j++)
+    // }
+    fprintf(saida, "====%d==== -> %.2f\n\n", (int) correto, correto/linhas2);
+    for (i = 0; i < linhas2; i++){
+        fprintf(saida,"%.0f\n", rotulos[i]);
+    }
     //Printando a matriz 1
     // for(i = 0; i < linhas; i++){
         // for (j = 0; j < n+1; j++){
@@ -253,7 +302,6 @@ int main(){
         // }
         //  putchar('\n');
     // }
-    puts("*****************************************");
     //Printando a matriz 2
     // for(i = 0; i < linhas2; i++){
         // for (j = 0; j < n; j++){
@@ -272,6 +320,7 @@ int main(){
         free(vetor4[i]);
         free(vetoraux[i]);
     }
+    printf("%s\n", pathsaida);
     free(str);
     free(str2);
     free(vetor);
@@ -280,8 +329,20 @@ int main(){
     free(vetor4);
     free(vetoraux);
     free(rotulos);
+    rewind(file);
+    rewind(file2);
+    fclose(saida);
+    loop++;
+    printf("%d\n", loop);
+    kcon = -1;
+    printf("%d - %c - %.2f\n", kcon, tipod, r);
+    puts("*****************************************");
+    }
+    free(pathtreino);
+    free(pathteste);
+    free(pathsaida);
+    free(pathaux);
     fclose(file);
     fclose(file2);
-    return 0;
-
+    fclose(config);
 }

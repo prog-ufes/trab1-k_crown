@@ -5,8 +5,8 @@
 
 int main(){
 
-    float *Encontrado, *Esperado;
-    int i, j, l, k, linhasTeste, numeroDeRotulos, **MatrizDeConfusao;
+    float *Encontrado, *Esperado, Acc;
+    int i, j, l, k, linhasTeste, numeroDeRotulos, **MatrizDeConfusao, Acertos=0;
 
     scanf("%i", &linhasTeste);
     scanf("%i", &numeroDeRotulos);
@@ -41,9 +41,28 @@ int main(){
     }
     for(i=0; i<numeroDeRotulos; i++){
         for(j=0; j<numeroDeRotulos; j++){
+            if(i==j){
+                Acertos = Acertos + MatrizDeConfusao[i][j];
+            }
+        }
+    }
+    printf("%i\n", Acertos);
+    printf("%i\n", linhasTeste);
+    float A = Acertos;
+    float T = linhasTeste;
+    Acc = A/T;
+
+    printf("%.2f\n", Acc);
+    printf("\n");
+    for(i=0; i<numeroDeRotulos; i++){
+        for(j=0; j<numeroDeRotulos; j++){
             printf("%i ", MatrizDeConfusao[i][j]);
         }
         printf("\n");
+    }
+    printf("\n");
+    for(i=0; i<linhasTeste; i++){
+        printf("%.2f\n", Encontrado[i]);
     }
 
     return 0;

@@ -67,7 +67,6 @@ int main(){
     FILE *file = fopen(pathtreino, "r"), *file2 = fopen(pathteste, "r");
     fscanf(config, "%s", pathsaida);
     strcpy(pathaux, pathsaida);
-    printf("%s\n", pathaux);
     int loop = 0;
 while(!feof(config)){
     int kcon;
@@ -77,7 +76,6 @@ while(!feof(config)){
     if (kcon == -1){
         break;
     }
-    printf("%d - %c\n", kcon, tipod);
     strcpy(pathsaida,pathaux);
     strcpy(conv,"predicao_");
     sprintf(numero, "%d", loop + 1);
@@ -169,10 +167,8 @@ while(!feof(config)){
         //  printf("Rotulos vetor %d:\n", i+1);
         for (j = 0; j < linhas; j++){
             vetor4[i][j] = vetor[j][n];
-            // printf("%.2f\n", vetor4[i][j]);
         }
     }
-    printf("%d, %d\n", linhas, linhas2);
     // Distancia Euclidiana
     if (tipod == 'E'){
         float soma = 0;
@@ -278,20 +274,37 @@ while(!feof(config)){
         }
         rotulos[i] = maiorindex(vetoraux[i], nrotulos);
     }
-    // for (i = 0; i < linhas2; i++){
-    //     printf("%.2f\n", rotulos[i]);
-    // }
+    for (i = 0; i < linhas2; i++){
+        printf("%.2f\n", rotulos[i]);
+    }
     //Comparando rotulos descobertos com rotulos testes
+    int **confusao = malloc(sizeof(int*)*nrotulos);
+    for (i = 0; i < nrotulos; i++){
+        confusao[i] = malloc(sizeof(int)*nrotulos);
+    }for(i = 0; i < nrotulos; i++){
+        for(j = 0; j < nrotulos; j++){
+            confusao[i][j] = 0;
+        }
+    }
     float correto = 0;
     for (i = 0; i < linhas2; i++){
         // printf("%.2f -- %.2f\n", rotulos[i], vetor2[i][n]-1);
+        // confusao[(int)vetor2[i][n]-1][(int) rotulos[i]]++;
+        confusao[(int) rotulos[i]][(int)vetor2[i][n]-1]++;
         if (( rotulos[i] + 1) == vetor2[i][n])
             correto++;
     }
-    // for (i = 0; i < nrotulos; i++){
-    //     for (j = 0; j < nrotulos; j++)
-    // }
-    fprintf(saida, "====%d==== -> %.2f\n\n", (int) correto, correto/linhas2);
+    fprintf(saida, "%.2f\n\n",correto/linhas2);
+    for(i = 0; i < nrotulos; i++){
+        for(j = 0; j < nrotulos; j++){
+            fprintf(saida,"%d ", confusao[i][j]);
+            // printf("%d ", confusao[i][j]);
+
+        }
+        fputc('\n', saida);
+        // putchar('\n');
+    }
+    fputc('\n', saida);
     for (i = 0; i < linhas2; i++){
         fprintf(saida,"%.0f\n", rotulos[i]);
     }
@@ -320,23 +333,24 @@ while(!feof(config)){
         free(vetor4[i]);
         free(vetoraux[i]);
     }
-    printf("%s\n", pathsaida);
+    for(i = 0; i < nrotulos; i++){   
+        free(confusao[i]);
+    }
     free(str);
     free(str2);
     free(vetor);
     free(vetor2);
     free(vetor3);
     free(vetor4);
+    free(confusao);
     free(vetoraux);
     free(rotulos);
     rewind(file);
     rewind(file2);
     fclose(saida);
     loop++;
-    printf("%d\n", loop);
     kcon = -1;
-    printf("%d - %c - %.2f\n", kcon, tipod, r);
-    puts("*****************************************");
+    puts("****");
     }
     free(pathtreino);
     free(pathteste);

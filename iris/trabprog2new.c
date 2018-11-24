@@ -2,7 +2,6 @@
 #include<stdlib.h>
 #include<math.h>
 #include<string.h>
-#include"distancias.h"
 
 void subtracao(float **Amostra, float **Vizinhos, float **subtracoes, int linhasamostras, int linhasVizinhos, int colunasVizinhos){
     int i=0, j=0, l=0, m=0;
@@ -181,7 +180,7 @@ void matrizrotulos(int linhasTeste, int linhasTreino, float **kDistanciasMenores
 }
 
 void maioresmat(int linhasTeste, int linhasTreino, int n, float **subtracoes, float **distancias){
-    int i. j;
+    int i, j;
     for(i=0; i<(linhasTeste * linhasTreino); i++){
         distancias[i][0] = subtracoes[i][n-2];
         distancias[i][1] = subtracoes[i][n-1];
@@ -190,9 +189,9 @@ void maioresmat(int linhasTeste, int linhasTreino, int n, float **subtracoes, fl
 
 void classificacao(float **rotulos, float *classificado, int linhasTeste, int linhasTreino){
     int i, j, k, n=0, **numeroRotulos;
-    numeroRotulos = (float **) malloc(linhasTeste * sizeof(float *));
+    numeroRotulos = (int **) malloc(linhasTeste * sizeof(int *));
     for(i=0; i<linhasTeste; i++){
-        numeroRotulos[i] = (float *) malloc(linhasTreino * sizeof(float));
+        numeroRotulos[i] = (int *) malloc(linhasTreino * sizeof(float));
     }
     classificado = (float *) malloc(linhasTeste * sizeof(float));
     for(i=0; i<linhasTeste; i++){
@@ -214,15 +213,15 @@ void classificacao(float **rotulos, float *classificado, int linhasTeste, int li
                 }
             }    
         }
-        classificado[i] = numeroRotulos[i][k];
+        classificado[i] = rotulos[i][k];
     }
 
 }
 
-int main(){
-
+void LerConfig(int *linhasConfig, int *todasColunas, int *numeroDeVizinhos, char *arquivotreino, char *arquivoteste, char *predicoes, char *modoDecalcular, float *raio){
+    
     char c, url[]="config.txt";
-    int colunas=0, i=0, j=0, linhas=0, *todasColunas;
+    int colunas=0, i=0, j=0, linhas=0;
     int y;
 
     todasColunas = (int *) malloc(1 * sizeof(int));
@@ -233,6 +232,7 @@ int main(){
         printf("Erro");
         exit(1);
     }
+    
     //Conta o número de linhas e colunas
     while(fread (&c, sizeof(char), 1, arq)) {
         if(c != '\n') {
@@ -250,12 +250,9 @@ int main(){
                 colunas = 0;
             }
         }
-    
     }
 
-    char *arquivotreino, *arquivoteste, *predicoes, *modoDecalcular;
-    int *numeroDeVizinhos;
-    float **kDistanciasMenores, *raio, **distancia, **somastreino, **somasteste, **somas, **multiplicacoes, **subtracoes, **rotulos;
+    linhasConfig = &linhas;
 
     arquivotreino = (char *) malloc(todasColunas[0] * sizeof(char));
     arquivoteste = (char *) malloc(todasColunas[1] * sizeof(char));
@@ -325,15 +322,20 @@ int main(){
     }
     putchar('\n');
     fclose(arq);
+}
 
+void LerArquivo(float **matrizTreino, int *linhasArquivo, int *colunasArquivo, char *arquivotreino){
+    
     FILE *filetreino = fopen(arquivotreino, "r");
     char *str = malloc(sizeof(char)*1000);
     if (filetreino == NULL) {
     printf ("Erro na abertura de arquivo! Programa terminado...");
     exit (1);
     }
-    int n = 0, linhas2 = 0, quebra = 0;
-    j = 0;
+    
+    int n = 0, linhas2 = 0, quebra = 0, j = 0, i;
+    
+    
     while(!feof(filetreino)){
         //fscanf(file, "%[^\n]", str);
         fgets(str, 1000, filetreino);
@@ -347,13 +349,22 @@ int main(){
         }
         linhas2++;
     }
+
+    int w;
+    w = n+1;
+    colunasArquivo = &w;
+    
     int linhasTreino;
     linhasTreino = linhas2 -1;
+    linhasArquivo = &linhasTreino;
+    
     rewind(filetreino);
-    float **matrizTreino = malloc(sizeof(float*) * linhasTreino);
+    
+    matrizTreino = malloc(sizeof(float*) * linhasTreino);
     for (i = 0; i < linhasTreino; i++){
         matrizTreino[i] = malloc(sizeof(float)*(n+1));
     }
+    
     for (i = 0; i < linhasTreino; i++){
         //fscanf(file, "%[^\n]", str);
         fgets(str, 1000, filetreino);
@@ -375,152 +386,247 @@ int main(){
     
     fclose(filetreino);
 
-    FILE *fileteste = fopen(arquivoteste, "r");
-    char *str1 = malloc(sizeof(char)*1000);
-    if (fileteste == NULL) {
-    printf ("Erro na abertura de arquivo! Programa terminado...");
-    exit (1);
-    }
-    int m = 0, linhas3 = 0;
-    j = 0;
-    quebra = 0;
-    while(!feof(fileteste)){
-        //fscanf(file, "%[^\n]", str);
-        fgets(str1, 1000, fileteste);
-        if( quebra == 0){
-            for(i = 0; i < strlen(str1); i++){
-                if (str1[i] == ','){
-                    m++;
-                }
-            }
-            quebra++;
-        }
-        linhas3++;
-    }
-    int linhasTeste;
-    linhasTeste = linhas3 -1;
-    rewind(fileteste);
-    float **matrizTeste = malloc(sizeof(float*) * linhasTeste);
-    for (i = 0; i < linhasTeste; i++){
-        matrizTeste[i] = malloc(sizeof(float)*(m+1));
-    }
-    j=0;
-    for (i = 0; i < linhasTeste; i++){
-        //fscanf(file, "%[^\n]", str);
-        fgets(str1, 1000, fileteste);
-        char *strnew1 = NULL;
-        strnew1 = strtok(str1, ",\n");
-        while(strnew1 != NULL){
-            matrizTeste[i][j] = atof(strnew1);
-            strnew1 = strtok(NULL, ",\n");
-            j++;
-        }
-        j = 0;
-    }
-    for(i = 0; i < linhasTeste; i++){
-        for (j = 0; j < m+1; j++)
-            printf("%.2f ", matrizTeste[i][j]);
-        putchar('\n');
+    free(str);
+}
+
+void MatrizDeConfusaoEAcc(int **matrizDeConfusao, int numeroDeRotulos, int colunasTreino1, float *classificado, float **matrizTeste, int linhasTeste1, int k){
+    
+    int i, j, Acertos, h, l, f, n;
+    float Acc;
+
+    f = colunasTreino1 - 1;
+    
+    matrizDeConfusao = (int **) malloc(numeroDeRotulos * sizeof(int *));
+    for(i=0; i<linhasTeste1; i++){
+        matrizDeConfusao[i] = (int *) malloc(numeroDeRotulos * sizeof(int));
     }
     
-    fclose(fileteste);
+    for(i=0; i<numeroDeRotulos; i++){
+        for(j=0; j<numeroDeRotulos; j++){
+            matrizDeConfusao[i][j] = 0;
+        }
+    }
 
-    subtracoes = (float **) malloc(sizeof(float *) * linhasTeste * linhasTreino);
-    for(i=0; i<(linhasTeste * linhasTreino); i++){
-        subtracoes[i] = (float *) malloc(sizeof(float) * (n+1));
+    for(i=0; i<linhasTeste1; i++){
+        l = classificado[i] - 1;
+        h = matrizTeste[i][f] - 1;
+        matrizDeConfusao[l][h]++;
     }
-    multiplicacoes = (float **) malloc(sizeof(float *) * linhasTeste * linhasTreino);
-    for(i=0; i<(linhasTeste * linhasTreino); i++){
-        multiplicacoes[i] = (float *) malloc(sizeof(float) * (n+1));
+    for(i=0; i<numeroDeRotulos; i++){
+        for(j=0; j<numeroDeRotulos; j++){
+            if(i==j){
+                Acertos = Acertos + matrizDeConfusao[i][j];
+            }
+        }
     }
-    somas = (float **) malloc(sizeof(float *) * linhasTeste * linhasTreino);
-    for(i=0; i<(linhasTeste * linhasTreino); i++){
+
+    float A = Acertos;
+    float T = linhasTeste1;
+    Acc = A/T;
+
+    char *predicoes;
+    char e;
+    
+    e = k  + '0';
+
+    predicoes = (char *) malloc(100 * sizeof(char));
+
+    strcpy(predicoes, "predicao_");
+    predicoes[strlen(predicoes)+1] = e;
+
+    FILE *arq = fopen(predicoes, "w");
+
+    fprintf(arq, "%.2f\n", Acc);
+    fprintf(arq, "\n");
+    for(i=0; i<numeroDeRotulos; i++){
+        for(j=0; j<numeroDeRotulos; j++){
+            fprintf(arq, "%i ", matrizDeConfusao[i][j]);
+        }
+        fprintf(arq, "\n");
+    }
+    fprintf(arq, "\n");
+    for(i=0; i<linhasTeste1; i++){
+        fprintf(arq, "%.2f\n", classificado[i]);
+    }
+    fclose(arq);
+}
+
+int maiorRotulo(float **matrizTreino, int linhasTreino1, int colunasTreino1){
+    int i, j, maior;
+    j =colunasTreino1 -1;
+
+    for(i=0; i<linhasTreino1; i++){
+        if(matrizTreino[i][j] <= matrizTreino[i+1][j]){
+            maior = matrizTreino[i+1][j];
+        }else{
+            maior = matrizTreino[i][j];
+        }
+    }
+    return maior;
+}
+
+int main(){
+
+    int i=0, j=0, **matrizDeConfusao, *linhasConfig, *todasColunas, numeroDeRotulos, linhas;
+    char *arquivotreino, *arquivoteste, *predicoes, *modoDecalcular;
+    int *numeroDeVizinhos, *linhasTreino, *linhasTeste, *colunasTreino, *colunasTeste;
+    float *classificado, **matrizTeste, **matrizTreino, **kDistanciasMenores, *raio, **distancia, **somastreino, **somasteste, **somas, **multiplicacoes, **subtracoes, **rotulos;
+
+    //Le Config
+    LerConfig(linhasConfig, todasColunas, numeroDeVizinhos, arquivotreino, arquivoteste, predicoes, modoDecalcular, raio);
+
+    printf("%s\n", arquivotreino);
+    printf("%s", arquivoteste);
+    
+
+    //Le Arquivo treino
+    LerArquivo(matrizTreino, linhasTreino, colunasTreino, arquivotreino);
+
+    //Le Arquivo teste
+    LerArquivo(matrizTeste, linhasTeste, colunasTeste, arquivoteste);
+
+    int colunasTreino1, linhasTeste1, linhasTreino1;
+    linhas = *linhasConfig;
+    linhasTeste1 = *linhasTeste;
+    linhasTreino1 = *linhasTreino;
+    colunasTreino1 = *colunasTreino;
+
+    //Aloca as memorias para as matrizes que vão receber as respostas das contas 
+    subtracoes = (float **) malloc(sizeof(float *) * linhasTeste1 * linhasTreino1);
+    for(i=0; i<(linhasTeste1 * linhasTreino1); i++){
+        subtracoes[i] = (float *) malloc(sizeof(float) * colunasTreino1);
+    }
+    multiplicacoes = (float **) malloc(sizeof(float *) * linhasTeste1 * linhasTreino1);
+    for(i=0; i<(linhasTeste1 * linhasTreino1); i++){
+        multiplicacoes[i] = (float *) malloc(sizeof(float) * colunasTreino1);
+    }
+    somas = (float **) malloc(sizeof(float *) * linhasTeste1 * linhasTreino1);
+    for(i=0; i<(linhasTeste1 * linhasTreino1); i++){
         somas[i] = (float *) malloc(sizeof(float) * 2);
     }
-    somasteste = (float **) malloc(sizeof(float *) * linhasTeste);
-    for(i=0; i<linhasTeste; i++){
+    somasteste = (float **) malloc(sizeof(float *) * linhasTeste1);
+    for(i=0; i<linhasTeste1; i++){
         somasteste[i] = (float *) malloc(sizeof(float) * 2);
     }
-    somastreino = (float **) malloc(sizeof(float *) * linhasTreino);
-    for(i=0; i<linhasTreino; i++){
+    somastreino = (float **) malloc(sizeof(float *) * linhasTreino1);
+    for(i=0; i<linhasTreino1; i++){
         somastreino[i] = (float *) malloc(sizeof(float) * 2);
     }
-    distancia = (float **) malloc(sizeof(float *) * linhasTeste * linhasTreino);
-    for(i=0; i<(linhasTeste * linhasTreino); i++){
+    distancia = (float **) malloc(sizeof(float *) * linhasTeste1 * linhasTreino1);
+    for(i=0; i<(linhasTeste1 * linhasTreino1); i++){
         distancia[i] = (float *) malloc(sizeof(float) * 2);
     }
 
+    //verifica o numero de rotulos
+    numeroDeRotulos = maiorRotulo(matrizTreino, linhasTreino1, colunasTreino1);
+
+    //Faz os calculos ate acabar as entradas fornecidas
     int k;
     for(k=0; k<(linhas - 3); k++){
         switch(modoDecalcular[i]){
             //distancia euclidiana
             case 'E':
-                    subtracao(matrizTeste, matrizTreino, subtracoes, linhasTeste, linhasTreino, (n+1));
-                    multiplicacao(subtracoes, multiplicacoes, linhasTeste, linhasTreino, (n+1), 2);
-                    soma(multiplicacoes, somas, linhasTeste, linhasTreino, (n+1));
-                    multiplicacaovet(somas, distancia, linhasTeste, linhasTreino, 0.5);
-                    for(i=0; i<linhasTeste; i++){
-                        bubblesort(distancia, (i+1)*linhasTreino, i*linhasTreino);
+                    subtracao(matrizTeste, matrizTreino, subtracoes, linhasTeste1, linhasTreino1, colunasTreino1);
+                    multiplicacao(subtracoes, multiplicacoes, linhasTeste1, linhasTreino1, colunasTreino1, 2);
+                    soma(multiplicacoes, somas, linhasTeste1, linhasTreino1, colunasTreino1);
+                    multiplicacaovet(somas, distancia, linhasTeste1, linhasTreino1, 0.5);
+                    for(i=0; i<linhasTeste1; i++){
+                        bubblesort(distancia, (i+1)*linhasTreino1, i*linhasTreino1);
                     }
-                    kmenores(numeroDeVizinhos[k], distancia, kDistanciasMenores, linhasTeste, linhasTreino);
-                    matrizrotulos(linhasTeste, linhasTreino, kDistanciasMenores, rotulos);
-                    for(i=0; i<(numeroDeVizinhos[k] * linhasTeste); i++){
-                        for(j=0; j<2; j++){
-                            printf("%.2f ", kDistanciasMenores[i][j]);
-                        }
-                        printf("\n");
-                    }
-
+                    kmenores(numeroDeVizinhos[k], distancia, kDistanciasMenores, linhasTeste1, linhasTreino1);
+                    matrizrotulos(linhasTeste1, linhasTreino1, kDistanciasMenores, rotulos);
+                    classificacao(rotulos, classificado, linhasTeste1, linhasTreino1);
+                    MatrizDeConfusaoEAcc(matrizDeConfusao, numeroDeRotulos, colunasTreino1, classificado, matrizTeste, linhasTeste1, k);
                     break;
             //distância de Minkowsky
             case 'M':
-                    subtracaomodulo(matrizTeste, matrizTreino, subtracoes, linhasTeste, linhasTreino, (n+1));
-                    multiplicacao(subtracoes, multiplicacoes, linhasTeste, linhasTreino, (n+1), raio[k]);
-                    soma(multiplicacoes, somas, linhasTeste, linhasTreino, (n+1));
-                    multiplicacaovet(somas, distancia, linhasTeste, linhasTreino, (1/raio[k]));
-                    for(i=0; i<linhasTeste; i++){
-                        bubblesort(distancia, (i+1)*linhasTreino, i*linhasTreino);
+                    subtracaomodulo(matrizTeste, matrizTreino, subtracoes, linhasTeste1, linhasTreino1, colunasTreino1);
+                    multiplicacao(subtracoes, multiplicacoes, linhasTeste1, linhasTreino1, colunasTreino1, raio[k]);
+                    soma(multiplicacoes, somas, linhasTeste1, linhasTreino1, colunasTreino1);
+                    multiplicacaovet(somas, distancia, linhasTeste1, linhasTreino1, (1/raio[k]));
+                    for(i=0; i<linhasTeste1; i++){
+                        bubblesort(distancia, (i+1)*linhasTreino1, i*linhasTreino1);
                     }
-                    kmenores(numeroDeVizinhos[k], distancia, kDistanciasMenores, linhasTeste, linhasTreino);
-                    matrizrotulos(linhasTeste, linhasTreino, kDistanciasMenores, rotulos);
-                    for(i=0; i<(numeroDeVizinhos[k] * linhasTeste); i++){
-                        for(j=0; j<2; j++){
-                            printf("%.2f ", kDistanciasMenores[i][j]);
-                        }
-                        printf("\n");
-                    }
+                    kmenores(numeroDeVizinhos[k], distancia, kDistanciasMenores, linhasTeste1, linhasTreino1);
+                    matrizrotulos(linhasTeste1, linhasTreino1, kDistanciasMenores, rotulos);
+                    classificacao(rotulos, classificado, linhasTeste1, linhasTreino1);
+                    MatrizDeConfusaoEAcc(matrizDeConfusao, numeroDeRotulos, colunasTreino1, classificado, matrizTeste, linhasTeste1, k);
                     break;
             //distância de Chebyshev
             case 'C':
-                    subtracaomodulo(matrizTeste, matrizTreino, subtracoes, linhasTeste, linhasTreino, (n+1));
-                    bubblesortmat(subtracoes, (n+1), linhasTeste, linhasTreino);
-                    maioresmat(linhasTeste, linhasTreino, colunastreino, subtracoes,distancia);
-                    for(i=0; i<linhasTeste; i++){
-                        bubblesort(distancia, (i+1)*linhasTreino, i*linhasTreino);
+                    subtracaomodulo(matrizTeste, matrizTreino, subtracoes, linhasTeste1, linhasTreino1, colunasTreino1);
+                    bubblesortmat(subtracoes, colunasTreino1, linhasTeste1, linhasTreino1);
+                    maioresmat(linhasTeste1, linhasTreino1, colunasTreino1, subtracoes, distancia);
+                    for(i=0; i<linhasTeste1; i++){
+                        bubblesort(distancia, (i+1)*linhasTreino1, i*linhasTreino1);
                     }
-                    kmenores(numeroDeVizinhos[k], distancia, kDistanciasMenores, linhasTeste, linhasTreino);
-                    matrizrotulos(linhasTeste, linhasTreino, kDistanciasMenores, rotulos);
-                    for(i=0; i<(linhasTeste * linhasTreino); i++){
-                        for(j=0; j<(n+1); j++){
-                            printf("%.2f ", subtracoes[i][j]);
-                        }
-                        printf("\n");
-                    }
+                    kmenores(numeroDeVizinhos[k], distancia, kDistanciasMenores, linhasTeste1, linhasTreino1);
+                    matrizrotulos(linhasTeste1, linhasTreino1, kDistanciasMenores, rotulos);
+                    classificacao(rotulos, classificado, linhasTeste1, linhasTreino1);
+                    MatrizDeConfusaoEAcc(matrizDeConfusao, numeroDeRotulos, colunasTreino1, classificado, matrizTeste, linhasTeste1, k);
                     break;
         }
     }
 
-    free(str);
-    for(i = 0; i < linhasTreino; i++){
+    //Da free
+    for(k=0; k<(linhas - 3); k++){
+        for(i=0; i<(numeroDeVizinhos[k] * linhasTeste1); i++){
+            free(kDistanciasMenores[i]);
+        }
+    }
+    free(kDistanciasMenores);
+
+    for(i = 0; i < linhasTreino1; i++){
         free(matrizTreino[i]);
     }
     free(matrizTreino);
 
-    free(str1);
-    for(i = 0; i < linhasTeste; i++){
+    for(i = 0; i < (linhasTeste1 * linhasTreino1); i++){
+        free(subtracoes[i]);
+    }
+    free(subtracoes);
+
+    for(i = 0; i < (linhasTeste1 * linhasTreino1); i++){
+        free(multiplicacoes[i]);
+    }
+    free(multiplicacoes);
+
+    for(i = 0; i < (linhasTeste1 * linhasTreino1); i++){
+        free(somas[i]);
+    }
+    free(somas);
+
+    for(i = 0; i < linhasTeste1; i++){
+        free(somasteste[i]);
+    }
+    free(somasteste);
+
+    for(i = 0; i < linhasTreino1; i++){
+        free(somastreino[i]);
+    }
+    free(somastreino);
+
+    for(i = 0; i < (linhasTeste1 * linhasTreino1); i++){
+        free(distancia[i]);
+    }
+    free(distancia);
+
+    for(i = 0; i < linhasTeste1; i++){
         free(matrizTeste[i]);
     }
     free(matrizTreino);
+
+    for(i=0; i<linhasTeste1; i++){
+        free(matrizDeConfusao[i]);
+    }
+    free(matrizDeConfusao);
+
+    for(i=0; i<linhasTeste1; i++){
+        free(rotulos[i]);
+    }
+    free(rotulos);
+
+    free(predicoes);
 
     free(todasColunas);
 

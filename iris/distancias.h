@@ -1,4 +1,4 @@
-void subtracao();}
+void subtracao();
 
 void subtracaovet();
 

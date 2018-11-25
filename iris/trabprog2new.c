@@ -475,10 +475,6 @@ int main(){
     //Le Config
     LerConfig(linhasConfig, todasColunas, numeroDeVizinhos, arquivotreino, arquivoteste, predicoes, modoDecalcular, raio);
 
-    printf("%s\n", arquivotreino);
-    printf("%s", arquivoteste);
-    
-
     //Le Arquivo treino
     LerArquivo(matrizTreino, linhasTreino, colunasTreino, arquivotreino);
 
@@ -537,6 +533,7 @@ int main(){
                     matrizrotulos(linhasTeste1, linhasTreino1, kDistanciasMenores, rotulos);
                     classificacao(rotulos, classificado, linhasTeste1, linhasTreino1);
                     MatrizDeConfusaoEAcc(matrizDeConfusao, numeroDeRotulos, colunasTreino1, classificado, matrizTeste, linhasTeste1, k);
+                    k++;
                     break;
             //distância de Minkowsky
             case 'M':
@@ -551,6 +548,7 @@ int main(){
                     matrizrotulos(linhasTeste1, linhasTreino1, kDistanciasMenores, rotulos);
                     classificacao(rotulos, classificado, linhasTeste1, linhasTreino1);
                     MatrizDeConfusaoEAcc(matrizDeConfusao, numeroDeRotulos, colunasTreino1, classificado, matrizTeste, linhasTeste1, k);
+                    k++;
                     break;
             //distância de Chebyshev
             case 'C':
@@ -564,6 +562,7 @@ int main(){
                     matrizrotulos(linhasTeste1, linhasTreino1, kDistanciasMenores, rotulos);
                     classificacao(rotulos, classificado, linhasTeste1, linhasTreino1);
                     MatrizDeConfusaoEAcc(matrizDeConfusao, numeroDeRotulos, colunasTreino1, classificado, matrizTeste, linhasTeste1, k);
+                    k++;
                     break;
         }
     }

@@ -262,9 +262,9 @@ while(!feof(config)){
     // k primeiros
     int nrotulos, aux;
     nrotulos = maior(vetor4[0], linhas);
-    float **vetoraux = malloc(sizeof(float*)*linhas2), *rotulos = malloc(sizeof(float)*linhas2);
+    float **vetoraux = calloc(linhas2,sizeof(float*)), *rotulos = malloc(sizeof(float)*linhas2);
     for(i = 0; i < linhas2; i++){
-        vetoraux[i] = malloc(sizeof(float)*nrotulos);
+        vetoraux[i] = calloc(nrotulos,sizeof(float));
     }
 
     for (i = 0; i < linhas2; i++){
@@ -274,9 +274,9 @@ while(!feof(config)){
         }
         rotulos[i] = maiorindex(vetoraux[i], nrotulos);
     }
-    for (i = 0; i < linhas2; i++){
-        printf("%.2f\n", rotulos[i]);
-    }
+    // for (i = 0; i < linhas2; i++){
+    //     printf("%.2f\n", rotulos[i]);
+    // }
     //Comparando rotulos descobertos com rotulos testes
     int **confusao = malloc(sizeof(int*)*nrotulos);
     for (i = 0; i < nrotulos; i++){
@@ -289,16 +289,17 @@ while(!feof(config)){
     float correto = 0;
     for (i = 0; i < linhas2; i++){
         // printf("%.2f -- %.2f\n", rotulos[i], vetor2[i][n]-1);
-        // confusao[(int)vetor2[i][n]-1][(int) rotulos[i]]++;
-        confusao[(int) rotulos[i]][(int)vetor2[i][n]-1]++;
+        confusao[(int)vetor2[i][n]-1][(int) rotulos[i]]++;
+        // confusao[(int) rotulos[i]][(int)vetor2[i][n]-1]++;
         if (( rotulos[i] + 1) == vetor2[i][n])
             correto++;
     }
     fprintf(saida, "%.2f\n\n",correto/linhas2);
+    printf("%.2f\n",correto/linhas2);
     for(i = 0; i < nrotulos; i++){
         for(j = 0; j < nrotulos; j++){
             fprintf(saida,"%d ", confusao[i][j]);
-            // printf("%d ", confusao[i][j]);
+            //printf("%d ", confusao[i][j]);
 
         }
         fputc('\n', saida);
@@ -306,21 +307,22 @@ while(!feof(config)){
     }
     fputc('\n', saida);
     for (i = 0; i < linhas2; i++){
-        fprintf(saida,"%.0f\n", rotulos[i]);
+        fprintf(saida,"%d\n", (int) rotulos[i]);
+        printf("%d\n", (int) rotulos[i] );
     }
     //Printando a matriz 1
     // for(i = 0; i < linhas; i++){
-        // for (j = 0; j < n+1; j++){
-        //      printf("%.2f ", vetor[i][j]);
-        // }
-        //  putchar('\n');
+    //     for (j = 0; j < n+1; j++){
+    //          printf("%.2f ", vetor[i][j]);
+    //     }
+    //      putchar('\n');
     // }
     //Printando a matriz 2
     // for(i = 0; i < linhas2; i++){
-        // for (j = 0; j < n; j++){
-        //     printf("%.2f ", vetor2[i][j]);
-        // }
-        // putchar('\n');
+    //     for (j = 0; j < n; j++){
+    //         printf("%.2f ", vetor2[i][j]);
+    //     }
+    //     putchar('\n');
     // }
     //liberando memoria
     for(i = 0; i < linhas; i++){   

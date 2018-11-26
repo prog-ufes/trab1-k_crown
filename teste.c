@@ -87,7 +87,7 @@ while(!feof(config)){
     if (saida == NULL) {
     exit (1);
     }
-    char *str = malloc(sizeof(char)*1000), *str2 = malloc(sizeof(char)*1000);
+    char *str = malloc(sizeof(char)*5000), *str2 = malloc(sizeof(char)*5000);
     if (file == NULL) {
     printf ("Erro na abertura de arquivo! Programa terminado...");
     exit (1);
@@ -113,6 +113,7 @@ while(!feof(config)){
     }
     linhas2--;
     linhas--;
+    printf("%d -- %d\n", linhas, linhas2);
     //retomar o arquivo para o inicio
     rewind(file2);
     rewind(file);
@@ -171,11 +172,13 @@ while(!feof(config)){
     }
     // Distancia Euclidiana
     if (tipod == 'E'){
-        float soma = 0;
+        float soma = 0, subtracao;
         for(i = 0; i < linhas2; i++){
             for(j = 0; j < linhas; j++){
                 for (int k = 0; k < n; k++){
-                    soma = pow(vetor2[i][k] - vetor[j][k], 2) + soma;
+                    subtracao = vetor2[i][k] - vetor[j][k];
+                    subtracao = subtracao * subtracao;
+                    soma = subtracao + soma;
                 }
                 vetor3[i][j] = sqrt(soma);
                 soma = 0;
@@ -294,8 +297,9 @@ while(!feof(config)){
         if (( rotulos[i] + 1) == vetor2[i][n])
             correto++;
     }
+    //printando no arquivo
     fprintf(saida, "%.2f\n\n",correto/linhas2);
-    printf("%.2f\n",correto/linhas2);
+    // printf("%.2f\n",correto/linhas2);
     for(i = 0; i < nrotulos; i++){
         for(j = 0; j < nrotulos; j++){
             fprintf(saida,"%d ", confusao[i][j]);
@@ -308,7 +312,7 @@ while(!feof(config)){
     fputc('\n', saida);
     for (i = 0; i < linhas2; i++){
         fprintf(saida,"%d\n", (int) rotulos[i]);
-        printf("%d\n", (int) rotulos[i] );
+        // printf("%d\n", (int) rotulos[i] );
     }
     //Printando a matriz 1
     // for(i = 0; i < linhas; i++){

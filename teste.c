@@ -87,16 +87,16 @@ while(!feof(config)){
     if (saida == NULL) {
     exit (1);
     }
-    char *str = malloc(sizeof(char)*5000), *str2 = malloc(sizeof(char)*5000);
+    char *str = malloc(sizeof(char)*90000), *str2 = malloc(sizeof(char)*90000);
     if (file == NULL) {
     printf ("Erro na abertura de arquivo! Programa terminado...");
     exit (1);
     }
     int nvirgulas = 0, linhas = 0, linhas2 = 0, i, quebra = 0, j = 0;
     // Calculo do numero de linhas
+    
     while(!feof(file)){
         fscanf(file, "%s", str);
-        // fgets(str, 1000, file);
         if( quebra == 0){
             for(i = 0; i < strlen(str); i++){
                 if (str[i] == ','){
@@ -164,7 +164,6 @@ while(!feof(config)){
     //     putchar('\n');
     // }
     // Colocando rotulos no vetor 4
-     printf("*");
     for (i = 0; i < linhas2; i++){
         //  printf("Rotulos vetor %d:\n", i+1);
         for (j = 0; j < linhas; j++){

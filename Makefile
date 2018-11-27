@@ -1,8 +1,5 @@
 all:
-	gcc trab1.c -o trab1 -lm
+	gcc trab1.c -o trab1 -lm -O2
 
 run:
 	./trab1
-
-time:
-	time ./trab1

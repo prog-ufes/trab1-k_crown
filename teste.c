@@ -92,7 +92,7 @@ while(!feof(config)){
     printf ("Erro na abertura de arquivo! Programa terminado...");
     exit (1);
     }
-    int n = 0, linhas = 0, linhas2 = 0, i, quebra = 0, j = 0;
+    int nvirgulas = 0, linhas = 0, linhas2 = 0, i, quebra = 0, j = 0;
     // Calculo do numero de linhas
     while(!feof(file)){
         fscanf(file, "%s", str);
@@ -100,7 +100,7 @@ while(!feof(config)){
         if( quebra == 0){
             for(i = 0; i < strlen(str); i++){
                 if (str[i] == ','){
-                    n++;
+                    nvirgulas++;
                 }
             }
             quebra++;
@@ -113,19 +113,19 @@ while(!feof(config)){
     }
     linhas2--;
     linhas--;
-    printf("%d -- %d\n", linhas, linhas2);
+    printf("%d -- %d --- %d\n", linhas, linhas2, nvirgulas);
     //retomar o arquivo para o inicio
     rewind(file2);
     rewind(file);
     //alocando memoria para a matriz de floats do arq 1
     float **vetor = malloc(sizeof(float*) * linhas);
     for (i = 0; i < linhas; i++){
-        vetor[i] = malloc(sizeof(float)*(n+1));
+        vetor[i] = malloc(sizeof(float)*(nvirgulas+1));
     }
     //alocando memoria para a matriz de floats do arq 2
     float **vetor2 = malloc(sizeof(float*) * linhas2);
     for (i = 0; i < linhas2; i++){
-        vetor2[i] = malloc(sizeof(float)*(n + 1));
+        vetor2[i] = malloc(sizeof(float)*(nvirgulas + 1));
     }
     //alocando memoria para o resultado da distancia
     float **vetor3 = malloc(sizeof(float*) * linhas2);
@@ -137,37 +137,38 @@ while(!feof(config)){
     for (i = 0; i < linhas2; i++){
         vetor4[i] = malloc(sizeof(float)*linhas);
     }
-    //Quebrando a string em varias para converter o valores 1
-    for (i = 0; i < linhas; i++){
-        fscanf(file, "%s", str);
-        // fgets(str, 1000, file);
-        char *strnew = NULL;
-        strnew = strtok(str, ",\n");
-        while(strnew != NULL){
-            vetor[i][j] = atof(strnew);
-            strnew = strtok(NULL, ",\n");
-            j++;
+    // Colocando valores no vetor de treino
+    for(i = 0; i < linhas; i++){
+        for (j = 0; j < nvirgulas+1; j++){
+            fscanf(file, "%f,", &vetor[i][j]);
         }
-        j = 0;
     }
-    //Quebrando a string em varias para converter o valores 2
-    for (i = 0; i < linhas2; i++){
-        fscanf(file2, "%s", str2);
-        // fgets(str2, 1000, file2);
-        char *strnew2 = NULL;
-        strnew2 = strtok(str2, ",\n");
-        while(strnew2 != NULL){
-            vetor2[i][j] = atof(strnew2);
-            strnew2 = strtok(NULL, ",\n");
-            j++;
+    /* printar o vetor de treino */
+    // for(i = 0; i < linhas; i++){
+    //     for (j = 0; j < nvirgulas+1; j++){
+    //         printf("%.2f ", vetor[i][j]);
+    //     }
+    //     putchar('\n');
+    // }
+    // Colocando valores no vetor de teste
+    for(i = 0; i < linhas2; i++){
+        for (j = 0; j < nvirgulas+1; j++){
+            fscanf(file2, "%f,", &vetor2[i][j]);
         }
-        j = 0;
     }
+    /* printar o vetor de teste */
+    // for(i = 0; i < linhas2; i++){
+    //     for (j = 0; j < nvirgulas+1; j++){
+    //         printf("%.2f ", vetor2[i][j]);
+    //     }
+    //     putchar('\n');
+    // }
     // Colocando rotulos no vetor 4
+     printf("*");
     for (i = 0; i < linhas2; i++){
         //  printf("Rotulos vetor %d:\n", i+1);
         for (j = 0; j < linhas; j++){
-            vetor4[i][j] = vetor[j][n];
+            vetor4[i][j] = vetor[j][nvirgulas];
         }
     }
     // Distancia Euclidiana
@@ -175,7 +176,7 @@ while(!feof(config)){
         float soma = 0, subtracao;
         for(i = 0; i < linhas2; i++){
             for(j = 0; j < linhas; j++){
-                for (int k = 0; k < n; k++){
+                for (int k = 0; k < nvirgulas; k++){
                     subtracao = vetor2[i][k] - vetor[j][k];
                     subtracao = subtracao * subtracao;
                     soma = subtracao + soma;
@@ -206,7 +207,7 @@ while(!feof(config)){
         float soma = 0;
         for(i = 0; i < linhas2; i++){
             for(j = 0; j < linhas; j++){
-                for (int k = 0; k < n; k++){
+                for (int k = 0; k < nvirgulas; k++){
                     soma = pow(fabs(vetor2[i][k] - vetor[j][k]), r) + soma;
                 }
                 vetor3[i][j] = pow(soma, 1/r);
@@ -234,7 +235,7 @@ while(!feof(config)){
         float max;
         for(i = 0; i < linhas2; i++){
             for(j = 0; j < linhas; j++){
-                for (int k = 0; k < n; k++){
+                for (int k = 0; k < nvirgulas; k++){
                     if (k == 0){
                     max = fabs(vetor2[i][k] - vetor[j][k]);
                     }
@@ -292,9 +293,9 @@ while(!feof(config)){
     float correto = 0;
     for (i = 0; i < linhas2; i++){
         // printf("%.2f -- %.2f\n", rotulos[i], vetor2[i][n]-1);
-        confusao[(int)vetor2[i][n]-1][(int) rotulos[i]]++;
+        confusao[(int)vetor2[i][nvirgulas]-1][(int) rotulos[i]]++;
         // confusao[(int) rotulos[i]][(int)vetor2[i][n]-1]++;
-        if (( rotulos[i] + 1) == vetor2[i][n])
+        if (( rotulos[i] + 1) == vetor2[i][nvirgulas])
             correto++;
     }
     //printando no arquivo

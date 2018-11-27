@@ -1,5 +1,5 @@
 all:
-	gcc teste.c -o trab1 -lm
+	gcc trab1.c -o trab1 -lm
 
 run:
 	./trab1

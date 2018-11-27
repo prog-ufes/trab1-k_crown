@@ -1,3 +1,9 @@
+/* *********** T r a b a l h o  d e  P r o g r a m a ç ã o II ***********
+    Professor da Disciplina: Jordana Salamon
+    Monitor da Disciplina: André Pacheco
+    Membros da dupla: Philipe Marques && André Neves
+   ********************************************************************** */
+                                                        
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -73,7 +79,7 @@ int main(){
         }
     char lixoc;
     int  linhas_treino = 0, linhas_teste = 0;
-    // Calculo do numero de linhas_treino de treino
+    /* Calculo do numero de linhas_treino de treino */
     while(!feof(filetreino)){
         fscanf(filetreino, "%c,", &lixoc);
         if (lixoc == '\n'){
@@ -81,7 +87,7 @@ int main(){
         }
     }
     rewind(filetreino);
-    // Calculo do numero de linhas_treino teste
+    /* Calculo do numero de linhas_treino teste */
     while(!feof(fileteste)){
         fscanf(fileteste, "%c,", &lixoc);
         if (lixoc == '\n'){
@@ -95,7 +101,7 @@ int main(){
     while(!feof(config)){
         int k_proximos;
         float r;
-        //alocando memoria para conter o local de saida do arquivo;
+        /* Alocando memoria para conter o local de saida do arquivo */
         char *conv = malloc(sizeof(char)*30), numero[20], tipod;
         fscanf(config, "%d, %c,", &k_proximos, &tipod);
         if (k_proximos == -1){
@@ -125,27 +131,27 @@ int main(){
         while(lixoc != '\n');
         printf("%d -- %d --- %d\n", linhas_treino, linhas_teste, nvirgulas);
         rewind(filetreino);
-        //alocando memoria para a matriz de floats do arq treino
+        /* Alocando memoria para a matriz de floats do arq treino */
         float **vetor_treino = malloc(sizeof(float*) * linhas_treino);
         for (i = 0; i < linhas_treino; i++){
             vetor_treino[i] = malloc(sizeof(float)*(nvirgulas+1));
         }
-        //alocando memoria para a matriz de floats do arq teste
+        /* Alocando memoria para a matriz de floats do arq teste */
         float **vetor_teste = malloc(sizeof(float*) * linhas_teste);
         for (i = 0; i < linhas_teste; i++){
             vetor_teste[i] = malloc(sizeof(float)*(nvirgulas + 1));
         }
-        //alocando memoria para os resultado das distancias
+        /* Alocando memoria para os resultado das distancias */
         float **distancias = malloc(sizeof(float*) * linhas_teste);
         for (i = 0; i < linhas_teste; i++){
             distancias[i] = malloc(sizeof(float)*linhas_treino);
         }
-        //alocando memoria para a matriz de rotulos do vetor_treino;
+        /* Alocando memoria para a matriz de rotulos do vetor_treino */
         float **rotulos_treino = malloc(sizeof(float*) * linhas_teste);
         for (i = 0; i < linhas_teste; i++){
             rotulos_treino[i] = malloc(sizeof(float)*linhas_treino);
         }
-        // Colocando valores no vetor de treino
+        /* Colocando valores no vetor de treino */
         for(i = 0; i < linhas_treino; i++){
             for (j = 0; j < nvirgulas+1; j++){
                 fscanf(filetreino, "%f,", &vetor_treino[i][j]);
@@ -166,7 +172,7 @@ int main(){
             }
         }
 
-        /* printar o vetpr de teste */
+        /* Printar o vetor de teste */
         // for(i = 0; i < linhas_teste; i++){
         //     for (j = 0; j < nvirgulas+1; j++){
         //         printf("%.2f ", vetor_teste[i][j]);
@@ -197,7 +203,7 @@ int main(){
                 }
             }
 
-        /* Print vetor_treino de distancias euclidianas de cada ponto j em realção a estrela i */
+        /* Print vetor de distancias euclidianas de cada ponto j em realção a estrela i */
         // for (i = 0; i < linhas_teste; i++){
         //     printf("Vetor %d:\n", i+1);
         //     for (j = 0; j < linhas_treino; j++){
@@ -229,7 +235,7 @@ int main(){
                 }
             }
 
-        /* Print vetor_treino de distancias mikowskianas de cada ponto j em realção a estrela i */
+        /* Print vetor de distancias mikowskianas de cada ponto j em realção a estrela i */
         // for (i = 0; i < linhas_teste; i++){
         //     printf("Vetor %d:\n", i+1);
         //     for (j = 0; j < linhas_treino; j++){
@@ -264,7 +270,7 @@ int main(){
                 }
             }
 
-        /* print vetor_treino de distancias chebyshevianas de cada ponto j em realção a estrela i */
+        /* Print vetor de distancias chebyshevianas de cada ponto j em realção a estrela i */
         // for (i = 0; i < linhas_teste; i++){
         //     printf("Vetor %d:\n", i+1);
         //     for (j = 0; j < linhas_treino; j++){
@@ -272,7 +278,7 @@ int main(){
         //     }
         // }
 
-        /* Sorted Chebyshev */
+        /* Sorted(Chebysheviana) */
             for (i = 0; i < linhas_teste; i++){
                 // printf("Vetor %d:\n", i+1);
                 bubblesort(distancias[i], linhas_treino, rotulos_treino[i]);
@@ -320,7 +326,7 @@ int main(){
                 correto++;
         }
 
-        /* Printando no arquivo */
+        /* Printando no arquivo de saída */
         fprintf(saida, "%.2f\n\n",correto/linhas_teste);
         // printf("%.2f\n",correto/linhas_teste);
         for(i = 0; i < nrotulos; i++){
@@ -354,7 +360,7 @@ int main(){
         //     putchar('\n');
         // }
 
-        /* Liberando memoria */
+        /* Liberando memoria das matrizes*/
         for(i = 0; i < linhas_treino; i++){   
             free(vetor_treino[i]);
         }

@@ -60,10 +60,28 @@ int main(){
         exit (1);
     }
     fscanf(config, "%s", pathtreino);
-    printf("%s\n", pathtreino);
+    // printf("%s\n", pathtreino);
     fscanf(config, "%s", pathteste);
-    printf("%s\n", pathteste);
+    // printf("%s\n", pathteste);
     FILE *file = fopen(pathtreino, "r"), *file2 = fopen(pathteste, "r");
+    char lixoc;
+    int  linhas = 0, linhas2 = 0;
+    // Calculo do numero de linhas de treino
+    while(!feof(file)){
+        fscanf(file, "%c,", &lixoc);
+        if (lixoc == '\n'){
+            linhas++;
+        }
+    }
+    rewind(file);
+    // Calculo do numero de linhas teste
+    while(!feof(file2)){
+        fscanf(file2, "%c,", &lixoc);
+        if (lixoc == '\n'){
+            linhas2++;
+        }
+    }
+    rewind(file2);
     fscanf(config, "%s", pathsaida);
     strcpy(pathaux, pathsaida);
     int loop = 0;
@@ -87,55 +105,20 @@ int main(){
         exit (1);
         }
         float lixo;
-        // char *str = malloc(sizeof(char)*90000), *str2 = malloc(sizeof(char)*90000);
         if (file == NULL) {
         printf ("Erro na abertura de arquivo! Programa terminado...");
         exit (1);
         }
-        int nvirgulas = 0, linhas = 0, linhas2 = 0, i, j = 0;
-        char lixoc;
-        // Calculo do numero de linhas
-        while(!feof(file)){
-            fscanf(file, "%c,", &lixoc);
-            if (lixoc == '\n'){
-                linhas++;
-            }
-        }
-        rewind(file);
-        while(!feof(file2)){
-            fscanf(file2, "%c,", &lixoc);
-            if (lixoc == '\n'){
-                linhas2++;
-            }
-        }
-        rewind(file2);
-        // while(!feof(file)){
-            // fscanf(file, "%s", str);
+        int nvirgulas = 0, i, j = 0;
+
         do {
             fscanf(file, "%c", &lixoc);
             if (lixoc == ','){
                 nvirgulas++;
             }
-        // for(i = 0; i < strlen(str); i++){
-        //     if (str[i] == ','){
-        //         nvirgulas++;
-        //     }
-        // }
         }
         while(lixoc != '\n');
-        //     }
-        //     linhas++;
-        // }
-        // while(!feof(file2)){
-        //     // fscanf(file2,"%s", str2);
-        //     fscanf(file, "%f,", &lixo);
-        //     linhas2++;
-        // }
-        linhas2--;
-        linhas--;
         printf("%d -- %d --- %d\n", linhas, linhas2, nvirgulas);
-        //retomar o arquivo para o inicio
-        // rewind(file2);
         rewind(file);
         //alocando memoria para a matriz de floats do arq 1
         float **vetor = malloc(sizeof(float*) * linhas);

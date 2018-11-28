@@ -248,9 +248,9 @@ int main(){
             for (i = 0; i < linhas_teste; i++){
                 // printf("Vetor %d:\n", i+1);
                 bubblesort(distancias[i], linhas_treino, rotulos_treino[i]);
-                for (j = 0; j < linhas_treino; j++){
-                    // printf("%.2f ---- %.2f\n", distancias[i][j], rotulos_treino[i][j]);
-                }
+                // for (j = 0; j < linhas_treino; j++){
+                //     // printf("%.2f ---- %.2f\n", distancias[i][j], rotulos_treino[i][j]);
+                // }
             }
         }
 
